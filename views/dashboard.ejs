@@ -386,12 +386,56 @@
             box-shadow: 0 4px 10px var(--shadow-md);
         }
 
+        /* ====== BOTÓN TOGGLE ESTADÍSTICAS ====== */
+        .btn-toggle-stats {
+            width: 100%;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 6px var(--shadow);
+        }
+
+        .btn-toggle-stats:hover {
+            background: #f8f9fa;
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-md);
+        }
+
+        .btn-toggle-stats.active {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .btn-toggle-stats.active .icon-chevron {
+            transform: rotate(180deg);
+        }
+
+        .icon-chevron {
+            transition: transform 0.3s ease;
+        }
+
         /* ====== ESTADÍSTICAS ====== */
         .stats-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
         }
 
         .stat-card {
@@ -764,6 +808,11 @@
                 text-align: center;
             }
 
+            .btn-toggle-stats {
+                padding: 0.9rem 1.2rem;
+                font-size: 14px;
+            }
+
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 0.8rem;
@@ -828,6 +877,11 @@
         @media (max-width: 480px) {
             .dashboard-container {
                 padding: 1rem;
+            }
+
+            .btn-toggle-stats {
+                padding: 0.8rem 1rem;
+                font-size: 13px;
             }
 
             .stats-container {
@@ -914,8 +968,23 @@
             <a href="/logout" class="logout">Cerrar sesión</a>
         </div>
 
-        <!-- CONTADORES DE ESTADÍSTICAS -->
-        <div class="stats-container">
+        <!-- BOTÓN PARA MOSTRAR ESTADÍSTICAS -->
+        <button class="btn-toggle-stats" id="btnToggleStats">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="20" x2="12" y2="10"></line>
+                <line x1="18" y1="20" x2="18" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="16"></line>
+            </svg>
+            <span>Ver Estadísticas</span>
+            <svg class="icon-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+
+        <!-- CONTADORES DE ESTADÍSTICAS (OCULTOS POR DEFECTO) -->
+        <div class="stats-container" id="statsContainer" style="display: none;">
             <div class="stat-card stat-success" data-filter="ambos">
                 <div class="stat-icon">✓</div>
                 <div class="stat-info">
