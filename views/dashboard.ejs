@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de grados - Dashboard</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
     <style>
         /* ====== VARIABLES ====== */
         :root {
@@ -429,13 +429,23 @@
 
         /* ====== ESTADÍSTICAS ====== */
         .stats-container {
-            display: grid;
+            display: none;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .stat-card {
@@ -1100,6 +1110,28 @@
     </footer>
 
     <!-- SCRIPTS -->
+
+    <script>
+        // 🎯 TOGGLE DE ESTADÍSTICAS
+        const btnToggleStats = document.getElementById('btnToggleStats');
+        const statsContainer = document.getElementById('statsContainer');
+
+        btnToggleStats.addEventListener('click', () => {
+            const isVisible = statsContainer.style.display === 'grid';
+
+            if (isVisible) {
+                // Ocultar estadísticas
+                statsContainer.style.display = 'none';
+                btnToggleStats.classList.remove('active');
+                btnToggleStats.querySelector('span').textContent = 'Ver Estadísticas';
+            } else {
+                // Mostrar estadísticas
+                statsContainer.style.display = 'grid';
+                btnToggleStats.classList.add('active');
+                btnToggleStats.querySelector('span').textContent = 'Ocultar Estadísticas';
+            }
+        });
+    </script>
     <script src="/js/main.js"></script>
     <script type="module">
         import { createClient } from "https://esm.sh/@supabase/supabase-js";
@@ -1115,6 +1147,8 @@
         const btnClear = document.getElementById("btnClear");
         const filas = document.querySelectorAll("#tablaGrados tbody tr");
         const statCards = document.querySelectorAll(".stat-card");
+
+
 
         let filtroActivo = null;
 
@@ -1287,7 +1321,6 @@
         );
 
         canal.subscribe();
-
         // Inicializar contadores
         actualizarContadores();
     </script>
