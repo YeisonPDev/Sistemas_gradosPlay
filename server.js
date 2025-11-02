@@ -15,13 +15,9 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// 🔥 Esto debe ir antes de app.get(...)
-app.use(express.static(path.join(__dirname, "public")));
 // === Configuración general ===
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-
 
 // Servir archivos estáticos desde la carpeta /public
 app.use(express.static(path.join(__dirname, "public")));
@@ -31,9 +27,11 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // === Sesiones ===
+// ⚠️ En Vercel las sesiones no se conservan entre reinicios.
+// Para algo persistente usar Supabase Auth o JWT.
 app.use(
   session({
-    secret: "clave-secreta",
+    secret: process.env.SESSION_SECRET || "clave-secreta",
     resave: false,
     saveUninitialized: false,
   })
@@ -73,7 +71,8 @@ app.post("/login", async (req, res) => {
 
 // === Página principal (Dashboard) ===
 app.get("/dashboard", requireLogin, async (req, res) => {
-  const { data: grados } = await supabase.from("grados").select("*");
+  const { data: grados, error } = await supabase.from("grados").select("*");
+  if (error) return res.status(500).send("Error al cargar datos");
   res.render("dashboard", { grados, user: req.session.user });
 });
 
@@ -98,6 +97,15 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// === Iniciar servidor ===
+// === Exportar para Vercel ===
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Servidor corriendo en puerto ${PORT}`));
+
+// En entorno local:
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () =>
+    console.log(`✅ Servidor corriendo en puerto ${PORT}`)
+  );
+}
+
+// Vercel necesita esta exportación
+export default app;
