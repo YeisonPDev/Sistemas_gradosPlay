@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de grados - Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* ====== VARIABLES ====== */
+        :root {
+            --primary: #1a1a2e;
+            --primary-light: #16213e;
+            --accent: #0f4c75;
+            --accent-hover: #3282b8;
+            --success: #2d6a4f;
+            --danger: #c1121f;
+            --warning: #f77f00;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --dark: #0f0f0f;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --text-muted: #95a5a6;
+            --border: #e1e8ed;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --shadow-md: rgba(0, 0, 0, 0.1);
+            --shadow-lg: rgba(0, 0, 0, 0.15);
+            --gradient: linear-gradient(135deg, #1a1a2e 0%, #0f4c75 100%);
+            --card-bg: #ffffff;
+        }
+
+        /* ====== RESET ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ====== BODY ====== */
+        body {
+            background: #f5f6fa;
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ====== NAVBAR ====== */
+        .navbar {
+            background: var(--gradient);
+            color: #fff;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* ====== LOGIN PAGE ====== */
+        .login-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            background: var(--light);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px var(--shadow-md);
+            padding: 3rem 2.5rem;
+            max-width: 440px;
+            width: 100%;
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+        }
+
+        .login-form input {
+            padding: 0.95rem 1.2rem;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: var(--light);
+            color: var(--text);
+        }
+
+        .login-form input:focus {
+            border-color: var(--accent);
+            outline: none;
+            background: var(--lighter);
+            box-shadow: 0 0 0 3px rgba(15, 76, 117, 0.08);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+        }
+
+        button:hover {
+            background: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-md);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* ====== ERROR ====== */
+        .error {
+            background: #fff5f5;
+            color: var(--danger);
+            padding: 0.9rem 1.2rem;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            border-left: 3px solid var(--danger);
+        }
+
+        /* ====== DASHBOARD ====== */
+        .dashboard-container {
+            flex: 1;
+            padding: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .dashboard-header {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 1.8rem 2.2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            border: 1px solid var(--border);
+        }
+
+        .dashboard-header h2 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.6rem;
+            font-weight: 600;
+            text-align: left;
+            letter-spacing: -0.5px;
+        }
+
+        .logout {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.8rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .logout:hover {
+            background: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px var(--shadow-md);
+        }
+
+        /* ====== BUSQUEDA ====== */
+        #busqueda {
+            width: 100%;
+            padding: 1rem 1.4rem;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            margin-bottom: 1.5rem;
+            background: var(--card-bg);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px var(--shadow);
+            color: var(--text);
+        }
+
+        #busqueda:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 2px 12px var(--shadow-md);
+        }
+
+        #busqueda::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* ====== TABLA ====== */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 0;
+            box-shadow: 0 2px 12px var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        #tablaGrados {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #tablaGrados thead {
+            background: var(--primary);
+            color: white;
+        }
+
+        #tablaGrados thead th {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        #tablaGrados tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        #tablaGrados tbody tr:hover {
+            background: #fafbfc;
+        }
+
+        #tablaGrados tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        /* Celda principal del estudiante */
+        #tablaGrados tbody td {
+            padding: 1.5rem 1.5rem;
+            color: var(--text);
+            vertical-align: top;
+        }
+
+        /* Estilo para información del estudiante */
+        .student-info {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .student-code {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Contenedor de acudientes */
+        .acudientes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .acudiente-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s ease;
+        }
+
+        .acudiente-item:hover {
+            background: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        .acudiente-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .acudiente-name {
+            font-size: 14px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .acudiente-info {
+            flex: 1;
+        }
+
+        /* ====== CHECKBOX CUSTOM ====== */
+        input[type="checkbox"].check {
+            appearance: none;
+            width: 44px;
+            height: 24px;
+            background: #cbd5e0;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            border: none;
+            flex-shrink: 0;
+        }
+
+        input[type="checkbox"].check::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="checkbox"].check:checked {
+            background: var(--success);
+        }
+
+        input[type="checkbox"].check:checked::before {
+            left: 23px;
+        }
+
+        input[type="checkbox"].check:hover {
+            opacity: 0.8;
+        }
+
+        /* ====== FOOTER ====== */
+        .footer {
+            background: var(--primary);
+            color: #a0a0a0;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            font-size: 13px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer p {
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+
+        /* ====== RESPONSIVE ====== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 1.5rem;
+            }
+
+            .brand {
+                font-size: 1.2rem;
+            }
+
+            .dashboard-container {
+                padding: 1.5rem;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1.5rem;
+            }
+
+            .dashboard-header h2 {
+                text-align: center;
+                font-size: 1.4rem;
+            }
+
+            .logout {
+                text-align: center;
+            }
+
+            .card {
+                padding: 2rem 1.5rem;
+            }
+
+            #tablaGrados thead th,
+            #tablaGrados tbody td {
+                padding: 1rem;
+                font-size: 13px;
+            }
+
+            .acudiente-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.6rem;
+            }
+
+            input[type="checkbox"].check {
+                align-self: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem 1rem;
+            }
+
+            .table-container {
+                border-radius: 10px;
+            }
+
+            #tablaGrados thead th,
+            #tablaGrados tbody td {
+                padding: 0.8rem;
+                font-size: 12px;
+            }
+
+            .student-info {
+                font-size: 14px;
+            }
+
+            .acudiente-name {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="brand">🎓 Grados Colegio</div>
+    </nav>
+
+    <!-- DASHBOARD CONTAINER -->
+    <div class="dashboard-container">
+        <!-- HEADER -->
+        <div class="dashboard-header">
+            <h2>Bienvenido, <%= user.nombre %> 👋</h2>
+            <a href="/logout" class="logout">Cerrar sesión</a>
+        </div>
+
+        <!-- BUSQUEDA -->
+        <input type="text" id="busqueda" placeholder="🔍 Buscar estudiante o código..." />
+
+        <!-- TABLA -->
+        <div class="table-container">
+            <table id="tablaGrados">
+                <thead>
+                    <tr>
+                        <th>Información del Estudiante</th>
+                        <th>Acudientes y Asistencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% grados.forEach(g=> { %>
+                        <tr data-id="<%= g.id %>">
+                            <!-- COLUMNA ESTUDIANTE -->
+                            <td>
+                                <span class="student-info">
+                                    <%= g.Estudiante %>
+                                </span>
+                                <span class="student-code">Código: <%= g.Codigo %></span>
+                            </td>
+
+                            <!-- COLUMNA ACUDIENTES -->
+                            <td>
+                                <div class="acudientes-container">
+
+                                    <!-- Acudiente 1 -->
+                                    <div class="acudiente-item">
+                                        <div class="acudiente-info">
+                                            <div class="acudiente-label">Acudiente 1</div>
+                                            <div
+                                                class="acudiente-name <%= g.estado1 ? 'estado-verde' : 'estado-rojo' %>">
+                                                <%= g.Acudiente_1 %>
+                                            </div>
+                                        </div>
+                                        <input type="checkbox" class="check" data-acudiente="1" <%=g.estado1 ? 'checked'
+                                            : '' %>
+                                        />
+                                    </div>
+
+                                    <!-- Acudiente 2 -->
+                                    <div class="acudiente-item">
+                                        <div class="acudiente-info">
+                                            <div class="acudiente-label">Acudiente 2</div>
+                                            <div
+                                                class="acudiente-name <%= g.estado2 ? 'estado-verde' : 'estado-rojo' %>">
+                                                <%= g.Acudiente_2 %>
+                                            </div>
+                                        </div>
+                                        <input type="checkbox" class="check" data-acudiente="2" <%=g.estado2 ? 'checked'
+                                            : '' %>
+                                        />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+
+
+            </table>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© <%= new Date().getFullYear() %> Grados Colegio | Desarrollado por Yeison</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="/js/main.js"></script>
+
+    <script type="module">
+        import { createClient } from "https://esm.sh/@supabase/supabase-js";
+
+        const supabase = createClient(
+            "https://dmgwjnsxmawqtecbkgcf.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtZ3dqbnN4bWF3cXRlY2JrZ2NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczNDI2OTYsImV4cCI6MjA3MjkxODY5Nn0.ToZ5Im4ci6BAgvHUHheEIP2YQqQ1_0T13-Re6kLxJ4w"
+        );
+        // Selección de elementos
+        const checkboxes = document.querySelectorAll(".check");
+        const busqueda = document.getElementById("busqueda");
+        const filas = document.querySelectorAll("#tablaGrados tbody tr");
+
+        // 🎯 Filtro de búsqueda en tiempo real
+        busqueda.addEventListener("input", (e) => {
+            const valor = e.target.value.toLowerCase();
+            filas.forEach((fila) => {
+                const texto = fila.innerText.toLowerCase();
+                fila.style.display = texto.includes(valor) ? "" : "none";
+            });
+        });
+
+        // 🎯 Actualización de estado (cuando el usuario marca o desmarca)
+        checkboxes.forEach((chk) => {
+            chk.addEventListener("change", async (e) => {
+                const fila = e.target.closest("tr");
+                const id = fila.dataset.id;
+                const acudiente = e.target.dataset.acudiente;
+                const nuevoEstado = e.target.checked ? 1 : 0;
+
+                if (!e.target.checked) {
+                    const confirmar = confirm("¿Deseas cambiar a NO ASISTIÓ?");
+                    if (!confirmar) {
+                        e.target.checked = true;
+                        return;
+                    }
+                }
+
+                const res = await fetch("/updateEstado", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, acudiente, estado: nuevoEstado }),
+                });
+
+                if (res.ok) {
+                    fila.style.transition = "background-color 0.5s ease";
+                    fila.style.backgroundColor = nuevoEstado ? "#c8f7c5" : "#f7c5c5";
+                    setTimeout(() => (fila.style.backgroundColor = ""), 1500);
+                }
+            });
+        });
+
+        // ⚡ SUSCRIPCIÓN EN TIEMPO REAL
+        const canal = supabase.channel("realtime:grados");
+
+        canal.on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "grados" },
+            (payload) => {
+                const fila = document.querySelector(`tr[data-id='${payload.new.id}']`);
+                if (!fila) return;
+
+                // Buscar los elementos del acudiente
+                const chk1 = fila.querySelector('[data-acudiente="1"]');
+                const chk2 = fila.querySelector('[data-acudiente="2"]');
+
+                if (payload.new.estado1 !== undefined) {
+                    chk1.checked = payload.new.estado1;
+                    fila.querySelector(".acudiente-item:nth-child(1)").style.color = payload
+                        .new.estado1
+                        ? "green"
+                        : "red";
+                }
+
+                if (payload.new.estado2 !== undefined) {
+                    chk2.checked = payload.new.estado2;
+                    fila.querySelector(".acudiente-item:nth-child(2)").style.color = payload
+                        .new.estado2
+                        ? "green"
+                        : "red";
+                }
+
+                // 💫 Efecto visual breve en la fila
+                fila.style.transition = "background-color 0.4s ease";
+                fila.style.backgroundColor = "#e7f3ff";
+                setTimeout(() => (fila.style.backgroundColor = ""), 800);
+            }
+        );
+
+        canal.subscribe();
+
+    </script>
+
+
+</body>
+
+</html>
