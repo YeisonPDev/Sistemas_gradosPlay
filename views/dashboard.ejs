@@ -72,42 +72,158 @@
         }
 
         /* ====== LOGIN PAGE ====== */
+        .login-page {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-subtitle {
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.9;
+            letter-spacing: 0.5px;
+        }
+
         .login-container {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem 1rem;
-            background: var(--light);
+            padding: 3rem 1rem;
+            position: relative;
+            z-index: 1;
         }
 
-        .card {
+        /* Decoraciones de fondo */
+        .decoration {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.08;
+            z-index: 0;
+        }
+
+        .decoration-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            top: -150px;
+            right: -150px;
+        }
+
+        .decoration-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            bottom: -100px;
+            left: -100px;
+        }
+
+        /* Tarjeta de login */
+        .login-card {
             background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 24px var(--shadow-md);
-            padding: 3rem 2.5rem;
-            max-width: 440px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px var(--shadow-lg);
+            padding: 0;
+            max-width: 460px;
             width: 100%;
             border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.6s ease-out;
         }
 
-        h2 {
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header de la tarjeta */
+        .card-header {
             text-align: center;
-            margin-bottom: 2rem;
+            padding: 2.5rem 2rem 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1.2rem;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 16px rgba(15, 76, 117, 0.2);
+        }
+
+        .card-header h2 {
+            margin: 0 0 0.5rem 0;
             color: var(--primary);
             font-size: 1.75rem;
             font-weight: 600;
             letter-spacing: -0.5px;
         }
 
+        .card-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        /* Formulario */
         .login-form {
+            padding: 2rem 2rem 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 1.4rem;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.3px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-muted);
+            pointer-events: none;
         }
 
         .login-form input {
-            padding: 0.95rem 1.2rem;
+            width: 100%;
+            padding: 0.95rem 1.2rem 0.95rem 3rem;
             border: 1.5px solid var(--border);
             border-radius: 10px;
             font-size: 15px;
@@ -123,8 +239,13 @@
             box-shadow: 0 0 0 3px rgba(15, 76, 117, 0.08);
         }
 
-        button {
-            background: var(--primary);
+        .login-form input:focus+.input-icon {
+            color: var(--accent);
+        }
+
+        /* Botón de login */
+        .btn-login {
+            background: var(--gradient);
             color: white;
             border: none;
             padding: 1rem 1.5rem;
@@ -134,27 +255,85 @@
             cursor: pointer;
             transition: all 0.3s ease;
             letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
 
-        button:hover {
-            background: var(--accent);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px var(--shadow-md);
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 76, 117, 0.3);
         }
 
-        button:active {
+        .btn-login:active {
             transform: translateY(0);
         }
 
-        /* ====== ERROR ====== */
-        .error {
+        .btn-login svg {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-login:hover svg {
+            transform: translateX(4px);
+        }
+
+        /* Error message */
+        .error-message {
+            margin: 1.5rem 2rem 0;
             background: #fff5f5;
             color: var(--danger);
-            padding: 0.9rem 1.2rem;
+            padding: 1rem 1.2rem;
             border-radius: 10px;
-            text-align: center;
             font-size: 14px;
             border-left: 3px solid var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-8px);
+            }
+
+            75% {
+                transform: translateX(8px);
+            }
+        }
+
+        .error-message svg {
+            flex-shrink: 0;
+        }
+
+        /* Footer de la tarjeta */
+        .card-footer {
+            padding: 1.5rem 2rem 2rem;
+            background: #fafbfc;
+            border-top: 1px solid var(--border);
+        }
+
+        .help-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 13px;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .help-text svg {
+            flex-shrink: 0;
+            opacity: 0.7;
         }
 
         /* ====== DASHBOARD ====== */
@@ -207,14 +386,101 @@
             box-shadow: 0 4px 10px var(--shadow-md);
         }
 
+        /* ====== ESTADÍSTICAS ====== */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.3rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px var(--shadow);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-md);
+        }
+
+        .stat-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 4px 16px rgba(15, 76, 117, 0.2);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .stat-success .stat-icon {
+            background: #d4edda;
+            color: #2d6a4f;
+        }
+
+        .stat-partial .stat-icon {
+            background: #fff3cd;
+            color: #f77f00;
+        }
+
+        .stat-danger .stat-icon {
+            background: #f8d7da;
+            color: #c1121f;
+        }
+
+        .stat-total .stat-icon {
+            background: #d1ecf1;
+            color: #0f4c75;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         /* ====== BUSQUEDA ====== */
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
         #busqueda {
             width: 100%;
-            padding: 1rem 1.4rem;
+            padding: 1rem 3rem 1rem 1.4rem;
             border: 1.5px solid var(--border);
             border-radius: 10px;
             font-size: 15px;
-            margin-bottom: 1.5rem;
             background: var(--card-bg);
             transition: all 0.3s ease;
             box-shadow: 0 2px 6px var(--shadow);
@@ -229,6 +495,34 @@
 
         #busqueda::placeholder {
             color: var(--text-muted);
+        }
+
+        .btn-clear {
+            position: absolute;
+            right: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .btn-clear:hover {
+            background: #f0f0f0;
+            color: var(--danger);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .btn-clear svg {
+            width: 20px;
+            height: 20px;
         }
 
         /* ====== TABLA ====== */
@@ -294,6 +588,37 @@
             font-size: 13px;
             color: var(--text-light);
             font-weight: 500;
+        }
+
+        /* Estados de nombres de acudientes */
+        .estado-verde {
+            color: #2d6a4f !important;
+            font-weight: 600;
+        }
+
+        .estado-rojo {
+            color: #c1121f !important;
+            font-weight: 600;
+        }
+
+        /* Colores de fila según asistencia */
+        .fila-ambos-asistieron {
+            background: linear-gradient(90deg, rgba(212, 237, 218, 0.3) 0%, rgba(212, 237, 218, 0.1) 100%) !important;
+            border-left: 4px solid #2d6a4f !important;
+        }
+
+        .fila-uno-asistio {
+            background: linear-gradient(90deg, rgba(255, 243, 205, 0.3) 0%, rgba(255, 243, 205, 0.1) 100%) !important;
+            border-left: 4px solid #f77f00 !important;
+        }
+
+        .fila-ninguno-asistio {
+            background: linear-gradient(90deg, rgba(248, 215, 218, 0.3) 0%, rgba(248, 215, 218, 0.1) 100%) !important;
+            border-left: 4px solid #c1121f !important;
+        }
+
+        #tablaGrados tbody tr:hover {
+            opacity: 0.95 !important;
         }
 
         /* Contenedor de acudientes */
@@ -394,6 +719,18 @@
             letter-spacing: 0.3px;
         }
 
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-divider {
+            opacity: 0.5;
+        }
+
         /* ====== RESPONSIVE ====== */
         @media (max-width: 768px) {
             .navbar {
@@ -402,6 +739,10 @@
 
             .brand {
                 font-size: 1.2rem;
+            }
+
+            .nav-subtitle {
+                display: none;
             }
 
             .dashboard-container {
@@ -423,8 +764,48 @@
                 text-align: center;
             }
 
-            .card {
-                padding: 2rem 1.5rem;
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .login-card {
+                max-width: 100%;
+            }
+
+            .card-header {
+                padding: 2rem 1.5rem 1.2rem;
+            }
+
+            .card-icon {
+                width: 64px;
+                height: 64px;
+            }
+
+            .login-form {
+                padding: 1.5rem;
+            }
+
+            .decoration {
+                display: none;
             }
 
             #tablaGrados thead th,
@@ -449,8 +830,44 @@
                 padding: 1rem;
             }
 
-            .card {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .login-container {
                 padding: 1.5rem 1rem;
+            }
+
+            .login-card {
+                border-radius: 16px;
+            }
+
+            .card-header {
+                padding: 1.5rem 1rem 1rem;
+            }
+
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .card-icon {
+                width: 56px;
+                height: 56px;
+            }
+
+            .login-form {
+                padding: 1.2rem;
+                gap: 1.2rem;
+            }
+
+            .card-footer {
+                padding: 1.2rem;
+            }
+
+            .help-text {
+                font-size: 12px;
+                flex-direction: column;
+                text-align: center;
             }
 
             .table-container {
@@ -470,6 +887,15 @@
             .acudiente-name {
                 font-size: 13px;
             }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+
+            .footer-divider {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -488,8 +914,52 @@
             <a href="/logout" class="logout">Cerrar sesión</a>
         </div>
 
-        <!-- BUSQUEDA -->
-        <input type="text" id="busqueda" placeholder="🔍 Buscar estudiante o código..." />
+        <!-- CONTADORES DE ESTADÍSTICAS -->
+        <div class="stats-container">
+            <div class="stat-card stat-success" data-filter="ambos">
+                <div class="stat-icon">✓</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="countAmbos">0</div>
+                    <div class="stat-label">Ambos Asistieron</div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-partial" data-filter="uno">
+                <div class="stat-icon">◐</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="countUno">0</div>
+                    <div class="stat-label">Solo Uno Asistió</div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-danger" data-filter="ninguno">
+                <div class="stat-icon">✗</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="countNinguno">0</div>
+                    <div class="stat-label">Ninguno Asistió</div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-total" data-filter="todos">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="countTotal">0</div>
+                    <div class="stat-label">Total Estudiantes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUSQUEDA CON BOTÓN LIMPIAR -->
+        <div class="search-wrapper">
+            <input type="text" id="busqueda" placeholder="🔍 Buscar estudiante o código..." />
+            <button class="btn-clear" id="btnClear" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
 
         <!-- TABLA -->
         <div class="table-container">
@@ -502,7 +972,8 @@
                 </thead>
                 <tbody>
                     <% grados.forEach(g=> { %>
-                        <tr data-id="<%= g.id %>">
+                        <tr data-id="<%= g.id %>"
+                            class="<%= (g.estado1 && g.estado2) ? 'fila-ambos-asistieron' : (g.estado1 || g.estado2) ? 'fila-uno-asistio' : 'fila-ninguno-asistio' %>">
                             <!-- COLUMNA ESTUDIANTE -->
                             <td>
                                 <span class="student-info">
@@ -514,7 +985,6 @@
                             <!-- COLUMNA ACUDIENTES -->
                             <td>
                                 <div class="acudientes-container">
-
                                     <!-- Acudiente 1 -->
                                     <div class="acudiente-item">
                                         <div class="acudiente-info">
@@ -542,26 +1012,26 @@
                                             : '' %>
                                         />
                                     </div>
-
                                 </div>
                             </td>
                         </tr>
                         <% }) %>
                 </tbody>
-
-
             </table>
         </div>
     </div>
 
     <!-- FOOTER -->
     <footer class="footer">
-        <p>© <%= new Date().getFullYear() %> Grados Colegio | Desarrollado por Yeison</p>
+        <div class="footer-content">
+            <p>© <%= new Date().getFullYear() %> Grados Colegio</p>
+            <span class="footer-divider">|</span>
+            <p>Desarrollado por Yeison</p>
+        </div>
     </footer>
 
     <!-- SCRIPTS -->
     <script src="/js/main.js"></script>
-
     <script type="module">
         import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
@@ -569,17 +1039,105 @@
             "https://dmgwjnsxmawqtecbkgcf.supabase.co",
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtZ3dqbnN4bWF3cXRlY2JrZ2NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczNDI2OTYsImV4cCI6MjA3MjkxODY5Nn0.ToZ5Im4ci6BAgvHUHheEIP2YQqQ1_0T13-Re6kLxJ4w"
         );
+
         // Selección de elementos
         const checkboxes = document.querySelectorAll(".check");
         const busqueda = document.getElementById("busqueda");
+        const btnClear = document.getElementById("btnClear");
         const filas = document.querySelectorAll("#tablaGrados tbody tr");
+        const statCards = document.querySelectorAll(".stat-card");
+
+        let filtroActivo = null;
+
+        // 🎯 Función para actualizar contadores
+        function actualizarContadores() {
+            const filasVisibles = Array.from(filas);
+
+            const ambos = filasVisibles.filter(f => f.classList.contains('fila-ambos-asistieron')).length;
+            const uno = filasVisibles.filter(f => f.classList.contains('fila-uno-asistio')).length;
+            const ninguno = filasVisibles.filter(f => f.classList.contains('fila-ninguno-asistio')).length;
+            const total = filasVisibles.length;
+
+            document.getElementById('countAmbos').textContent = ambos;
+            document.getElementById('countUno').textContent = uno;
+            document.getElementById('countNinguno').textContent = ninguno;
+            document.getElementById('countTotal').textContent = total;
+        }
+
+        // 🎯 Función para actualizar clase de fila según estado
+        function actualizarClaseFila(fila) {
+            const chk1 = fila.querySelector('[data-acudiente="1"]');
+            const chk2 = fila.querySelector('[data-acudiente="2"]');
+
+            fila.classList.remove('fila-ambos-asistieron', 'fila-uno-asistio', 'fila-ninguno-asistio');
+
+            if (chk1.checked && chk2.checked) {
+                fila.classList.add('fila-ambos-asistieron');
+            } else if (chk1.checked || chk2.checked) {
+                fila.classList.add('fila-uno-asistio');
+            } else {
+                fila.classList.add('fila-ninguno-asistio');
+            }
+
+            actualizarContadores();
+        }
 
         // 🎯 Filtro de búsqueda en tiempo real
         busqueda.addEventListener("input", (e) => {
             const valor = e.target.value.toLowerCase();
+            btnClear.style.display = valor ? "flex" : "none";
+
+            filtroActivo = null;
+            statCards.forEach(card => card.classList.remove('active'));
+
             filas.forEach((fila) => {
                 const texto = fila.innerText.toLowerCase();
                 fila.style.display = texto.includes(valor) ? "" : "none";
+            });
+        });
+
+        // 🎯 Botón limpiar búsqueda
+        btnClear.addEventListener("click", () => {
+            busqueda.value = "";
+            btnClear.style.display = "none";
+            filtroActivo = null;
+            statCards.forEach(card => card.classList.remove('active'));
+            filas.forEach(fila => fila.style.display = "");
+        });
+
+        // 🎯 Filtro por estadísticas
+        statCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const filtro = card.dataset.filter;
+
+                // Si ya está activo, desactivar
+                if (filtroActivo === filtro) {
+                    filtroActivo = null;
+                    card.classList.remove('active');
+                    filas.forEach(fila => fila.style.display = "");
+                    busqueda.value = "";
+                    btnClear.style.display = "none";
+                    return;
+                }
+
+                // Activar nuevo filtro
+                filtroActivo = filtro;
+                statCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                busqueda.value = "";
+                btnClear.style.display = "none";
+
+                filas.forEach(fila => {
+                    if (filtro === 'todos') {
+                        fila.style.display = "";
+                    } else if (filtro === 'ambos') {
+                        fila.style.display = fila.classList.contains('fila-ambos-asistieron') ? "" : "none";
+                    } else if (filtro === 'uno') {
+                        fila.style.display = fila.classList.contains('fila-uno-asistio') ? "" : "none";
+                    } else if (filtro === 'ninguno') {
+                        fila.style.display = fila.classList.contains('fila-ninguno-asistio') ? "" : "none";
+                    }
+                });
             });
         });
 
@@ -606,6 +1164,15 @@
                 });
 
                 if (res.ok) {
+                    // Actualizar nombres de acudientes
+                    const acudienteInfo = fila.querySelector(`.acudiente-item:nth-child(${acudiente}) .acudiente-name`);
+                    acudienteInfo.classList.remove('estado-verde', 'estado-rojo');
+                    acudienteInfo.classList.add(nuevoEstado ? 'estado-verde' : 'estado-rojo');
+
+                    // Actualizar clase de fila
+                    actualizarClaseFila(fila);
+
+                    // Efecto visual
                     fila.style.transition = "background-color 0.5s ease";
                     fila.style.backgroundColor = nuevoEstado ? "#c8f7c5" : "#f7c5c5";
                     setTimeout(() => (fila.style.backgroundColor = ""), 1500);
@@ -623,25 +1190,25 @@
                 const fila = document.querySelector(`tr[data-id='${payload.new.id}']`);
                 if (!fila) return;
 
-                // Buscar los elementos del acudiente
                 const chk1 = fila.querySelector('[data-acudiente="1"]');
                 const chk2 = fila.querySelector('[data-acudiente="2"]');
+                const acudiente1Name = fila.querySelector('.acudiente-item:nth-child(1) .acudiente-name');
+                const acudiente2Name = fila.querySelector('.acudiente-item:nth-child(2) .acudiente-name');
 
                 if (payload.new.estado1 !== undefined) {
                     chk1.checked = payload.new.estado1;
-                    fila.querySelector(".acudiente-item:nth-child(1)").style.color = payload
-                        .new.estado1
-                        ? "green"
-                        : "red";
+                    acudiente1Name.classList.remove('estado-verde', 'estado-rojo');
+                    acudiente1Name.classList.add(payload.new.estado1 ? 'estado-verde' : 'estado-rojo');
                 }
 
                 if (payload.new.estado2 !== undefined) {
                     chk2.checked = payload.new.estado2;
-                    fila.querySelector(".acudiente-item:nth-child(2)").style.color = payload
-                        .new.estado2
-                        ? "green"
-                        : "red";
+                    acudiente2Name.classList.remove('estado-verde', 'estado-rojo');
+                    acudiente2Name.classList.add(payload.new.estado2 ? 'estado-verde' : 'estado-rojo');
                 }
+
+                // Actualizar clase de fila
+                actualizarClaseFila(fila);
 
                 // 💫 Efecto visual breve en la fila
                 fila.style.transition = "background-color 0.4s ease";
@@ -652,9 +1219,9 @@
 
         canal.subscribe();
 
+        // Inicializar contadores
+        actualizarContadores();
     </script>
-
-
 </body>
 
 </html>
