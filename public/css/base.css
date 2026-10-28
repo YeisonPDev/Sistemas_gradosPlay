@@ -1,0 +1,235 @@
+/* =========================================================
+   base.css — estilos compartidos (variables, reset, layout)
+   ========================================================= */
+
+:root {
+  /* Marca */
+  --brand-900: #0f1b33;
+  --brand-800: #16264a;
+  --brand-700: #1e3a6b;
+  --brand-500: #2f5fb3;
+  --brand-accent: #d62828;
+  --brand-gradient: linear-gradient(135deg, #0f1b33 0%, #1e3a6b 100%);
+
+  /* Neutros */
+  --bg: #f3f5f9;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --border: #e3e8ef;
+  --border-strong: #cbd5e1;
+  --text: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  /* Estados */
+  --success: #15803d;
+  --success-soft: #dcfce7;
+  --warning: #b45309;
+  --warning-soft: #fef3c7;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  --info: #1d4ed8;
+  --info-soft: #dbeafe;
+
+  /* Forma y sombra */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(15, 27, 51, 0.06);
+  --shadow: 0 4px 12px rgba(15, 27, 51, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 27, 51, 0.14);
+  --focus-ring: 0 0 0 3px rgba(47, 95, 179, 0.25);
+
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg {
+  display: block;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Logo ---------- */
+.logo {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  object-fit: contain;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Barra superior ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 2rem;
+  background: var(--brand-gradient);
+  color: #fff;
+  border-bottom: 3px solid var(--brand-accent);
+  box-shadow: var(--shadow);
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.topbar-title {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.topbar-title strong {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.topbar-title span {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.btn-primary {
+  background: var(--brand-700);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--brand-800);
+}
+
+.btn-ghost-light {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.btn-ghost-light:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  margin-top: auto;
+  padding: 1.25rem 1rem;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .topbar {
+    padding: 0.65rem 1rem;
+  }
+
+  .topbar-title span {
+    display: none;
+  }
+
+  .logo {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

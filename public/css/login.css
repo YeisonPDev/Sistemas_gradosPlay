@@ -1,0 +1,292 @@
+/* =========================================================
+   login.css — pantalla de inicio de sesión
+   ========================================================= */
+
+.login-page {
+  background: var(--bg);
+}
+
+.login-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(360px, 1fr);
+  min-height: calc(100vh - 56px);
+}
+
+/* ---------- Panel de marca (izquierda) ---------- */
+.login-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 3rem;
+  background: var(--brand-gradient);
+  color: #fff;
+  overflow: hidden;
+}
+
+.login-brand::after {
+  content: "";
+  position: absolute;
+  right: -120px;
+  bottom: -120px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  border: 48px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
+.login-brand-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.login-brand-header .logo {
+  width: 52px;
+  height: 52px;
+}
+
+.login-brand-header strong {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.login-brand-header span {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.login-brand-body h1 {
+  max-width: 420px;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.login-brand-body p {
+  max-width: 420px;
+  margin-top: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.login-brand-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 1.75rem;
+}
+
+.login-brand-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.login-brand-features svg {
+  flex-shrink: 0;
+  color: #fff;
+  opacity: 0.8;
+}
+
+.login-brand-footer {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- Formulario (derecha) ---------- */
+.login-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card-logo {
+  display: none;
+  margin-bottom: 1.5rem;
+}
+
+.login-card-logo .logo {
+  width: 56px;
+  height: 56px;
+}
+
+.login-card h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--brand-900);
+  letter-spacing: -0.4px;
+}
+
+.login-card-subtitle {
+  margin-top: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.925rem;
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+}
+
+.alert svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.alert-error {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border: 1px solid rgba(185, 28, 28, 0.2);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  margin-top: 1.75rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.85rem;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 0.9rem 0.75rem 2.6rem;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: var(--focus-ring);
+}
+
+.form-input.has-toggle {
+  padding-right: 2.8rem;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.toggle-password:hover {
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+}
+
+.toggle-password:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.btn-login {
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+}
+
+.login-help {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.825rem;
+  text-align: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .login-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .login-brand {
+    display: none;
+  }
+
+  .login-card-logo {
+    display: block;
+  }
+
+  .login-main {
+    padding: 2.5rem 1rem;
+  }
+}

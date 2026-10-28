@@ -3,1327 +3,212 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de grados - Dashboard</title>
-    <link rel="stylesheet" href="./css/styles.css">
-    <style>
-        /* ====== VARIABLES ====== */
-        :root {
-            --primary: #1a1a2e;
-            --primary-light: #16213e;
-            --accent: #0f4c75;
-            --accent-hover: #3282b8;
-            --success: #2d6a4f;
-            --danger: #c1121f;
-            --warning: #f77f00;
-            --light: #f8f9fa;
-            --lighter: #ffffff;
-            --dark: #0f0f0f;
-            --text: #2d3436;
-            --text-light: #636e72;
-            --text-muted: #95a5a6;
-            --border: #e1e8ed;
-            --shadow: rgba(0, 0, 0, 0.06);
-            --shadow-md: rgba(0, 0, 0, 0.1);
-            --shadow-lg: rgba(0, 0, 0, 0.15);
-            --gradient: linear-gradient(135deg, #1a1a2e 0%, #0f4c75 100%);
-            --card-bg: #ffffff;
-        }
-
-        /* ====== RESET ====== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* ====== BODY ====== */
-        body {
-            background: #f5f6fa;
-            color: var(--text);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        /* ====== NAVBAR ====== */
-        .navbar {
-            background: var(--gradient);
-            color: #fff;
-            padding: 1.2rem 2.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 12px var(--shadow-md);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .brand {
-            font-size: 1.4rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        /* ====== LOGIN PAGE ====== */
-        .login-page {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-subtitle {
-            font-size: 13px;
-            font-weight: 500;
-            opacity: 0.9;
-            letter-spacing: 0.5px;
-        }
-
-        .login-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Decoraciones de fondo */
-        .decoration {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.08;
-            z-index: 0;
-        }
-
-        .decoration-1 {
-            width: 400px;
-            height: 400px;
-            background: var(--accent);
-            top: -150px;
-            right: -150px;
-        }
-
-        .decoration-2 {
-            width: 300px;
-            height: 300px;
-            background: var(--primary);
-            bottom: -100px;
-            left: -100px;
-        }
-
-        /* Tarjeta de login */
-        .login-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px var(--shadow-lg);
-            padding: 0;
-            max-width: 460px;
-            width: 100%;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            position: relative;
-            z-index: 2;
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Header de la tarjeta */
-        .card-header {
-            text-align: center;
-            padding: 2.5rem 2rem 1.5rem;
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .card-icon {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 1.2rem;
-            background: var(--gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: 0 4px 16px rgba(15, 76, 117, 0.2);
-        }
-
-        .card-header h2 {
-            margin: 0 0 0.5rem 0;
-            color: var(--primary);
-            font-size: 1.75rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        .card-subtitle {
-            color: var(--text-light);
-            font-size: 14px;
-            margin: 0;
-            font-weight: 400;
-        }
-
-        /* Formulario */
-        .login-form {
-            padding: 2rem 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            letter-spacing: 0.3px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 1rem;
-            color: var(--text-muted);
-            pointer-events: none;
-        }
-
-        .login-form input {
-            width: 100%;
-            padding: 0.95rem 1.2rem 0.95rem 3rem;
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            background: var(--light);
-            color: var(--text);
-        }
-
-        .login-form input:focus {
-            border-color: var(--accent);
-            outline: none;
-            background: var(--lighter);
-            box-shadow: 0 0 0 3px rgba(15, 76, 117, 0.08);
-        }
-
-        .login-form input:focus+.input-icon {
-            color: var(--accent);
-        }
-
-        /* Botón de login */
-        .btn-login {
-            background: var(--gradient);
-            color: white;
-            border: none;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(15, 76, 117, 0.3);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .btn-login svg {
-            transition: transform 0.3s ease;
-        }
-
-        .btn-login:hover svg {
-            transform: translateX(4px);
-        }
-
-        /* Error message */
-        .error-message {
-            margin: 1.5rem 2rem 0;
-            background: #fff5f5;
-            color: var(--danger);
-            padding: 1rem 1.2rem;
-            border-radius: 10px;
-            font-size: 14px;
-            border-left: 3px solid var(--danger);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-8px);
-            }
-
-            75% {
-                transform: translateX(8px);
-            }
-        }
-
-        .error-message svg {
-            flex-shrink: 0;
-        }
-
-        /* Footer de la tarjeta */
-        .card-footer {
-            padding: 1.5rem 2rem 2rem;
-            background: #fafbfc;
-            border-top: 1px solid var(--border);
-        }
-
-        .help-text {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 13px;
-            color: var(--text-light);
-            margin: 0;
-        }
-
-        .help-text svg {
-            flex-shrink: 0;
-            opacity: 0.7;
-        }
-
-        /* ====== DASHBOARD ====== */
-        .dashboard-container {
-            flex: 1;
-            padding: 2.5rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .dashboard-header {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 1.8rem 2.2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px var(--shadow);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            border: 1px solid var(--border);
-        }
-
-        .dashboard-header h2 {
-            margin: 0;
-            color: var(--primary);
-            font-size: 1.6rem;
-            font-weight: 600;
-            text-align: left;
-            letter-spacing: -0.5px;
-        }
-
-        .logout {
-            background: var(--primary);
-            color: white;
-            padding: 0.75rem 1.8rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
-        }
-
-        .logout:hover {
-            background: var(--accent);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px var(--shadow-md);
-        }
-
-        /* ====== BOTÓN TOGGLE ESTADÍSTICAS ====== */
-        .btn-toggle-stats {
-            width: 100%;
-            background: var(--card-bg);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--primary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 6px var(--shadow);
-        }
-
-        .btn-toggle-stats:hover {
-            background: #f8f9fa;
-            border-color: var(--accent);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px var(--shadow-md);
-        }
-
-        .btn-toggle-stats.active {
-            background: var(--gradient);
-            color: white;
-            border-color: transparent;
-        }
-
-        .btn-toggle-stats.active .icon-chevron {
-            transform: rotate(180deg);
-        }
-
-        .icon-chevron {
-            transition: transform 0.3s ease;
-        }
-
-        /* ====== ESTADÍSTICAS ====== */
-        .stats-container {
-            display: none;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            animation: slideDown 0.4s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.3rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 2px 8px var(--shadow);
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--shadow-md);
-        }
-
-        .stat-card.active {
-            border-color: var(--accent);
-            box-shadow: 0 4px 16px rgba(15, 76, 117, 0.2);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .stat-success .stat-icon {
-            background: #d4edda;
-            color: #2d6a4f;
-        }
-
-        .stat-partial .stat-icon {
-            background: #fff3cd;
-            color: #f77f00;
-        }
-
-        .stat-danger .stat-icon {
-            background: #f8d7da;
-            color: #c1121f;
-        }
-
-        .stat-total .stat-icon {
-            background: #d1ecf1;
-            color: #0f4c75;
-        }
-
-        .stat-info {
-            flex: 1;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            line-height: 1;
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: var(--text-light);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ====== BUSQUEDA ====== */
-        .search-wrapper {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-
-        #busqueda {
-            width: 100%;
-            padding: 1rem 3rem 1rem 1.4rem;
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            font-size: 15px;
-            background: var(--card-bg);
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 6px var(--shadow);
-            color: var(--text);
-        }
-
-        #busqueda:focus {
-            border-color: var(--accent);
-            outline: none;
-            box-shadow: 0 2px 12px var(--shadow-md);
-        }
-
-        #busqueda::placeholder {
-            color: var(--text-muted);
-        }
-
-        .btn-clear {
-            position: absolute;
-            right: 0.8rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            padding: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            transition: all 0.3s ease;
-            border-radius: 6px;
-        }
-
-        .btn-clear:hover {
-            background: #f0f0f0;
-            color: var(--danger);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .btn-clear svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* ====== TABLA ====== */
-        .table-container {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 0;
-            box-shadow: 0 2px 12px var(--shadow);
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        #tablaGrados {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        #tablaGrados thead {
-            background: var(--primary);
-            color: white;
-        }
-
-        #tablaGrados thead th {
-            padding: 1.2rem 1.5rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            border-bottom: 2px solid var(--accent);
-        }
-
-        #tablaGrados tbody tr {
-            border-bottom: 1px solid var(--border);
-            transition: all 0.2s ease;
-        }
-
-        #tablaGrados tbody tr:hover {
-            background: #fafbfc;
-        }
-
-        #tablaGrados tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        /* Celda principal del estudiante */
-        #tablaGrados tbody td {
-            padding: 1.5rem 1.5rem;
-            color: var(--text);
-            vertical-align: top;
-        }
-
-        /* Estilo para información del estudiante */
-        .student-info {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--primary);
-            margin-bottom: 0.8rem;
-            display: block;
-        }
-
-        .student-code {
-            font-size: 13px;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        /* Estados de nombres de acudientes */
-        .estado-verde {
-            color: #2d6a4f !important;
-            font-weight: 600;
-        }
-
-        .estado-rojo {
-            color: #c1121f !important;
-            font-weight: 600;
-        }
-
-        /* Colores de fila según asistencia */
-        .fila-ambos-asistieron {
-            background: linear-gradient(90deg, rgba(212, 237, 218, 0.3) 0%, rgba(212, 237, 218, 0.1) 100%) !important;
-            border-left: 4px solid #2d6a4f !important;
-        }
-
-        .fila-uno-asistio {
-            background: linear-gradient(90deg, rgba(255, 243, 205, 0.3) 0%, rgba(255, 243, 205, 0.1) 100%) !important;
-            border-left: 4px solid #f77f00 !important;
-        }
-
-        .fila-ninguno-asistio {
-            background: linear-gradient(90deg, rgba(248, 215, 218, 0.3) 0%, rgba(248, 215, 218, 0.1) 100%) !important;
-            border-left: 4px solid #c1121f !important;
-        }
-
-        #tablaGrados tbody tr:hover {
-            opacity: 0.95 !important;
-        }
-
-        /* Contenedor de acudientes */
-        .acudientes-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .acudiente-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.8rem 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            transition: all 0.2s ease;
-        }
-
-        .acudiente-item:hover {
-            background: #e9ecef;
-            border-color: #dee2e6;
-        }
-
-        .acudiente-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.3rem;
-        }
-
-        .acudiente-name {
-            font-size: 14px;
-            color: var(--text);
-            font-weight: 500;
-        }
-
-        .acudiente-info {
-            flex: 1;
-        }
-
-        /* ====== CHECKBOX CUSTOM ====== */
-        input[type="checkbox"].check {
-            appearance: none;
-            width: 44px;
-            height: 24px;
-            background: #cbd5e0;
-            border-radius: 12px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            border: none;
-            flex-shrink: 0;
-        }
-
-        input[type="checkbox"].check::before {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: white;
-            top: 3px;
-            left: 3px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        input[type="checkbox"].check:checked {
-            background: var(--success);
-        }
-
-        input[type="checkbox"].check:checked::before {
-            left: 23px;
-        }
-
-        input[type="checkbox"].check:hover {
-            opacity: 0.8;
-        }
-
-        /* ====== FOOTER ====== */
-        .footer {
-            background: var(--primary);
-            color: #a0a0a0;
-            text-align: center;
-            padding: 1.5rem 1rem;
-            font-size: 13px;
-            margin-top: auto;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .footer p {
-            margin: 0;
-            letter-spacing: 0.3px;
-        }
-
-        .footer-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-divider {
-            opacity: 0.5;
-        }
-
-        /* ====== RESPONSIVE ====== */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 1rem 1.5rem;
-            }
-
-            .brand {
-                font-size: 1.2rem;
-            }
-
-            .nav-subtitle {
-                display: none;
-            }
-
-            .dashboard-container {
-                padding: 1.5rem;
-            }
-
-            .dashboard-header {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 1.5rem;
-            }
-
-            .dashboard-header h2 {
-                text-align: center;
-                font-size: 1.4rem;
-            }
-
-            .logout {
-                text-align: center;
-            }
-
-            .btn-toggle-stats {
-                padding: 0.9rem 1.2rem;
-                font-size: 14px;
-            }
-
-            .stats-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.8rem;
-            }
-
-            .stat-card {
-                padding: 1rem;
-            }
-
-            .stat-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-            }
-
-            .stat-label {
-                font-size: 11px;
-            }
-
-            .login-card {
-                max-width: 100%;
-            }
-
-            .card-header {
-                padding: 2rem 1.5rem 1.2rem;
-            }
-
-            .card-icon {
-                width: 64px;
-                height: 64px;
-            }
-
-            .login-form {
-                padding: 1.5rem;
-            }
-
-            .decoration {
-                display: none;
-            }
-
-            #tablaGrados thead th,
-            #tablaGrados tbody td {
-                padding: 1rem;
-                font-size: 13px;
-            }
-
-            .acudiente-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.6rem;
-            }
-
-            input[type="checkbox"].check {
-                align-self: flex-start;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .dashboard-container {
-                padding: 1rem;
-            }
-
-            .btn-toggle-stats {
-                padding: 0.8rem 1rem;
-                font-size: 13px;
-            }
-
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-
-            .login-container {
-                padding: 1.5rem 1rem;
-            }
-
-            .login-card {
-                border-radius: 16px;
-            }
-
-            .card-header {
-                padding: 1.5rem 1rem 1rem;
-            }
-
-            .card-header h2 {
-                font-size: 1.5rem;
-            }
-
-            .card-icon {
-                width: 56px;
-                height: 56px;
-            }
-
-            .login-form {
-                padding: 1.2rem;
-                gap: 1.2rem;
-            }
-
-            .card-footer {
-                padding: 1.2rem;
-            }
-
-            .help-text {
-                font-size: 12px;
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .table-container {
-                border-radius: 10px;
-            }
-
-            #tablaGrados thead th,
-            #tablaGrados tbody td {
-                padding: 0.8rem;
-                font-size: 12px;
-            }
-
-            .student-info {
-                font-size: 14px;
-            }
-
-            .acudiente-name {
-                font-size: 13px;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                gap: 0.3rem;
-            }
-
-            .footer-divider {
-                display: none;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de asistencia | Control de Grados</title>
+    <link rel="icon" type="image/jpeg" href="/img/cursos-logo.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
 </head>
 
-<body>
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="brand">🎓 Grados Colegio</div>
-    </nav>
+<body data-supabase-url="<%= supabaseUrl %>" data-supabase-key="<%= supabaseAnonKey %>" data-canal="<%= canal %>">
+    <!-- BARRA SUPERIOR -->
+    <header class="topbar">
+        <a href="/dashboard" class="topbar-brand">
+            <img src="/img/cursos-logo.jpg" alt="Logo" class="logo" />
+            <span class="topbar-title">
+                <strong>Control de Grados</strong>
+                <span>Sistema de asistencia</span>
+            </span>
+        </a>
 
-    <!-- DASHBOARD CONTAINER -->
-    <div class="dashboard-container">
-        <!-- HEADER -->
-        <div class="dashboard-header">
-            <h2>Bienvenido, <%= user.nombre %> 👋</h2>
-            <a href="/logout" class="logout">Cerrar sesión</a>
+        <div class="topbar-user">
+            <div class="user-chip">
+                <span class="user-avatar" aria-hidden="true"><%= (user.nombre || "?").charAt(0) %></span>
+                <span class="user-name"><%= user.nombre %></span>
+            </div>
+            <a href="/logout" class="btn btn-ghost-light">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Salir</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <!-- ENCABEZADO -->
+        <div class="page-header">
+            <div>
+                <h1>Asistencia de acudientes</h1>
+                <p>Bienvenido, <%= user.nombre %>. Marca la llegada de cada acudiente a la ceremonia.</p>
+            </div>
+            <span class="live-indicator" id="liveIndicator">
+                <span class="live-dot"></span>
+                <span id="liveText">Conectando...</span>
+            </span>
         </div>
 
-        <!-- BOTÓN PARA MOSTRAR ESTADÍSTICAS -->
-        <button class="btn-toggle-stats" id="btnToggleStats">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="20" x2="12" y2="10"></line>
-                <line x1="18" y1="20" x2="18" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="16"></line>
-            </svg>
-            <span>Ver Estadísticas</span>
-            <svg class="icon-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-        </button>
-
-        <!-- CONTADORES DE ESTADÍSTICAS (OCULTOS POR DEFECTO) -->
-        <div class="stats-container" id="statsContainer" style="display: none;">
-            <div class="stat-card stat-success" data-filter="ambos">
-                <div class="stat-icon">✓</div>
-                <div class="stat-info">
-                    <div class="stat-value" id="countAmbos">0</div>
-                    <div class="stat-label">Ambos Asistieron</div>
-                </div>
+        <!-- HERRAMIENTAS -->
+        <div class="toolbar">
+            <div class="search-wrapper">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <label for="busqueda" class="sr-only">Buscar estudiante</label>
+                <input type="search" id="busqueda" placeholder="Buscar por estudiante, acudiente o código"
+                    autocomplete="off" />
+                <button type="button" class="btn-clear" id="btnClear" aria-label="Limpiar búsqueda" hidden>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
-            <div class="stat-card stat-partial" data-filter="uno">
-                <div class="stat-icon">◐</div>
-                <div class="stat-info">
-                    <div class="stat-value" id="countUno">0</div>
-                    <div class="stat-label">Solo Uno Asistió</div>
-                </div>
-            </div>
-
-            <div class="stat-card stat-danger" data-filter="ninguno">
-                <div class="stat-icon">✗</div>
-                <div class="stat-info">
-                    <div class="stat-value" id="countNinguno">0</div>
-                    <div class="stat-label">Ninguno Asistió</div>
-                </div>
-            </div>
-
-            <div class="stat-card stat-total" data-filter="todos">
-                <div class="stat-icon">👥</div>
-                <div class="stat-info">
-                    <div class="stat-value" id="countTotal">0</div>
-                    <div class="stat-label">Total Estudiantes</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BUSQUEDA CON BOTÓN LIMPIAR -->
-        <div class="search-wrapper">
-            <input type="text" id="busqueda" placeholder="🔍 Buscar estudiante o código..." />
-            <button class="btn-clear" id="btnClear" style="display: none;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
+            <button type="button" class="btn btn-toggle-stats" id="btnToggleStats" aria-expanded="false"
+                aria-controls="statsContainer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="12" y1="20" x2="12" y2="10"></line>
+                    <line x1="18" y1="20" x2="18" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="16"></line>
+                </svg>
+                <span>Ver estadísticas</span>
+                <svg class="icon-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
             </button>
         </div>
 
+        <!-- ESTADÍSTICAS (ocultas por defecto) -->
+        <section class="stats-grid" id="statsContainer" aria-label="Estadísticas de asistencia" hidden>
+            <button type="button" class="stat-card stat-success" data-filter="ambos">
+                <span class="stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </span>
+                <span>
+                    <span class="stat-value" id="countAmbos">0</span>
+                    <span class="stat-label">Ambos asistieron</span>
+                </span>
+            </button>
+
+            <button type="button" class="stat-card stat-partial" data-filter="uno">
+                <span class="stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </span>
+                <span>
+                    <span class="stat-value" id="countUno">0</span>
+                    <span class="stat-label">Solo uno asistió</span>
+                </span>
+            </button>
+
+            <button type="button" class="stat-card stat-danger" data-filter="ninguno">
+                <span class="stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </span>
+                <span>
+                    <span class="stat-value" id="countNinguno">0</span>
+                    <span class="stat-label">Ninguno asistió</span>
+                </span>
+            </button>
+
+            <button type="button" class="stat-card stat-total" data-filter="todos">
+                <span class="stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </span>
+                <span>
+                    <span class="stat-value" id="countTotal">0</span>
+                    <span class="stat-label">Total estudiantes</span>
+                </span>
+            </button>
+        </section>
+
         <!-- TABLA -->
-        <div class="table-container">
+        <section class="table-card">
+            <div class="table-card-header">
+                <span id="resultCount"><%= grados.length %> estudiantes</span>
+                <div class="legend" aria-hidden="true">
+                    <span class="legend-item"><span class="legend-swatch ambos"></span>Ambos</span>
+                    <span class="legend-item"><span class="legend-swatch uno"></span>Uno</span>
+                    <span class="legend-item"><span class="legend-swatch ninguno"></span>Ninguno</span>
+                </div>
+            </div>
+
             <table id="tablaGrados">
                 <thead>
                     <tr>
-                        <th>Información del Estudiante</th>
-                        <th>Acudientes y Asistencia</th>
+                        <th scope="col">Estudiante</th>
+                        <th scope="col">Acudientes y asistencia</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% grados.forEach(g=> { %>
+                    <% grados.forEach(g => { %>
                         <tr data-id="<%= g.id %>"
                             class="<%= (g.estado1 && g.estado2) ? 'fila-ambos-asistieron' : (g.estado1 || g.estado2) ? 'fila-uno-asistio' : 'fila-ninguno-asistio' %>">
-                            <!-- COLUMNA ESTUDIANTE -->
                             <td>
-                                <span class="student-info">
-                                    <%= g.Estudiante %>
-                                </span>
-                                <span class="student-code">Código: <%= g.Codigo %></span>
+                                <span class="student-name"><%= g.Estudiante %></span>
+                                <span class="student-code">Código <%= g.Codigo %></span>
                             </td>
-
-                            <!-- COLUMNA ACUDIENTES -->
                             <td>
                                 <div class="acudientes-container">
-                                    <!-- Acudiente 1 -->
-                                    <div class="acudiente-item">
-                                        <div class="acudiente-info">
-                                            <div class="acudiente-label">Acudiente 1</div>
-                                            <div
-                                                class="acudiente-name <%= g.estado1 ? 'estado-verde' : 'estado-rojo' %>">
-                                                <%= g.Acudiente_1 %>
-                                            </div>
-                                        </div>
-                                        <input type="checkbox" class="check" data-acudiente="1" <%=g.estado1 ? 'checked'
-                                            : '' %>
-                                        />
-                                    </div>
-
-                                    <!-- Acudiente 2 -->
-                                    <div class="acudiente-item">
-                                        <div class="acudiente-info">
-                                            <div class="acudiente-label">Acudiente 2</div>
-                                            <div
-                                                class="acudiente-name <%= g.estado2 ? 'estado-verde' : 'estado-rojo' %>">
-                                                <%= g.Acudiente_2 %>
-                                            </div>
-                                        </div>
-                                        <input type="checkbox" class="check" data-acudiente="2" <%=g.estado2 ? 'checked'
-                                            : '' %>
-                                        />
-                                    </div>
+                                    <% [1, 2].forEach(n => { const estado = g['estado' + n]; %>
+                                        <label class="acudiente-item">
+                                            <span class="acudiente-info">
+                                                <span class="acudiente-label">Acudiente <%= n %></span>
+                                                <span class="acudiente-name <%= estado ? 'estado-verde' : 'estado-rojo' %>"
+                                                    data-name="<%= n %>"><%= g['Acudiente_' + n] %></span>
+                                            </span>
+                                            <input type="checkbox" class="check" data-acudiente="<%= n %>"
+                                                aria-label="Asistencia acudiente <%= n %> de <%= g.Estudiante %>"
+                                                <%= estado ? 'checked' : '' %> />
+                                        </label>
+                                    <% }) %>
                                 </div>
                             </td>
                         </tr>
-                        <% }) %>
+                    <% }) %>
                 </tbody>
             </table>
-        </div>
-    </div>
 
-    <!-- FOOTER -->
+            <p class="empty-state" id="emptyState" hidden>No se encontraron estudiantes con ese criterio.</p>
+        </section>
+    </main>
+
     <footer class="footer">
         <div class="footer-content">
-            <p>© <%= new Date().getFullYear() %> Grados Colegio</p>
-            <span class="footer-divider">|</span>
-            <p>Desarrollado por Yeison</p>
+            <span>&copy; <%= new Date().getFullYear() %> Control de Grados</span>
+            <span>Desarrollado por Yeison</span>
         </div>
     </footer>
 
-    <!-- SCRIPTS -->
-
-    <script>
-        // 🎯 TOGGLE DE ESTADÍSTICAS
-        const btnToggleStats = document.getElementById('btnToggleStats');
-        const statsContainer = document.getElementById('statsContainer');
-
-        btnToggleStats.addEventListener('click', () => {
-            const isVisible = statsContainer.style.display === 'grid';
-
-            if (isVisible) {
-                // Ocultar estadísticas
-                statsContainer.style.display = 'none';
-                btnToggleStats.classList.remove('active');
-                btnToggleStats.querySelector('span').textContent = 'Ver Estadísticas';
-            } else {
-                // Mostrar estadísticas
-                statsContainer.style.display = 'grid';
-                btnToggleStats.classList.add('active');
-                btnToggleStats.querySelector('span').textContent = 'Ocultar Estadísticas';
-            }
-        });
-    </script>
-    <script src="/js/main.js"></script>
-    <script type="module">
-        import { createClient } from "https://esm.sh/@supabase/supabase-js";
-
-        const supabase = createClient(
-            "https://dmgwjnsxmawqtecbkgcf.supabase.co",
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtZ3dqbnN4bWF3cXRlY2JrZ2NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczNDI2OTYsImV4cCI6MjA3MjkxODY5Nn0.ToZ5Im4ci6BAgvHUHheEIP2YQqQ1_0T13-Re6kLxJ4w"
-        );
-
-        // Selección de elementos
-        const checkboxes = document.querySelectorAll(".check");
-        const busqueda = document.getElementById("busqueda");
-        const btnClear = document.getElementById("btnClear");
-        const filas = document.querySelectorAll("#tablaGrados tbody tr");
-        const statCards = document.querySelectorAll(".stat-card");
-
-
-
-        let filtroActivo = null;
-
-        // 🎯 Función para actualizar contadores
-        function actualizarContadores() {
-            const filasVisibles = Array.from(filas);
-
-            const ambos = filasVisibles.filter(f => f.classList.contains('fila-ambos-asistieron')).length;
-            const uno = filasVisibles.filter(f => f.classList.contains('fila-uno-asistio')).length;
-            const ninguno = filasVisibles.filter(f => f.classList.contains('fila-ninguno-asistio')).length;
-            const total = filasVisibles.length;
-
-            document.getElementById('countAmbos').textContent = ambos;
-            document.getElementById('countUno').textContent = uno;
-            document.getElementById('countNinguno').textContent = ninguno;
-            document.getElementById('countTotal').textContent = total;
-        }
-
-        // 🎯 Función para actualizar clase de fila según estado
-        function actualizarClaseFila(fila) {
-            const chk1 = fila.querySelector('[data-acudiente="1"]');
-            const chk2 = fila.querySelector('[data-acudiente="2"]');
-
-            fila.classList.remove('fila-ambos-asistieron', 'fila-uno-asistio', 'fila-ninguno-asistio');
-
-            if (chk1.checked && chk2.checked) {
-                fila.classList.add('fila-ambos-asistieron');
-            } else if (chk1.checked || chk2.checked) {
-                fila.classList.add('fila-uno-asistio');
-            } else {
-                fila.classList.add('fila-ninguno-asistio');
-            }
-
-            actualizarContadores();
-        }
-
-        // 🎯 Filtro de búsqueda en tiempo real
-        busqueda.addEventListener("input", (e) => {
-            const valor = e.target.value.toLowerCase();
-            btnClear.style.display = valor ? "flex" : "none";
-
-            filtroActivo = null;
-            statCards.forEach(card => card.classList.remove('active'));
-
-            filas.forEach((fila) => {
-                const texto = fila.innerText.toLowerCase();
-                fila.style.display = texto.includes(valor) ? "" : "none";
-            });
-        });
-
-        // 🎯 Botón limpiar búsqueda
-        btnClear.addEventListener("click", () => {
-            busqueda.value = "";
-            btnClear.style.display = "none";
-            filtroActivo = null;
-            statCards.forEach(card => card.classList.remove('active'));
-            filas.forEach(fila => fila.style.display = "");
-        });
-
-        // 🎯 Filtro por estadísticas
-        statCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const filtro = card.dataset.filter;
-
-                // Si ya está activo, desactivar
-                if (filtroActivo === filtro) {
-                    filtroActivo = null;
-                    card.classList.remove('active');
-                    filas.forEach(fila => fila.style.display = "");
-                    busqueda.value = "";
-                    btnClear.style.display = "none";
-                    return;
-                }
-
-                // Activar nuevo filtro
-                filtroActivo = filtro;
-                statCards.forEach(c => c.classList.remove('active'));
-                card.classList.add('active');
-                busqueda.value = "";
-                btnClear.style.display = "none";
-
-                filas.forEach(fila => {
-                    if (filtro === 'todos') {
-                        fila.style.display = "";
-                    } else if (filtro === 'ambos') {
-                        fila.style.display = fila.classList.contains('fila-ambos-asistieron') ? "" : "none";
-                    } else if (filtro === 'uno') {
-                        fila.style.display = fila.classList.contains('fila-uno-asistio') ? "" : "none";
-                    } else if (filtro === 'ninguno') {
-                        fila.style.display = fila.classList.contains('fila-ninguno-asistio') ? "" : "none";
-                    }
-                });
-            });
-        });
-
-        // 🎯 Actualización de estado (cuando el usuario marca o desmarca)
-        checkboxes.forEach((chk) => {
-            chk.addEventListener("change", async (e) => {
-                const fila = e.target.closest("tr");
-                const id = fila.dataset.id;
-                const acudiente = e.target.dataset.acudiente;
-                const nuevoEstado = e.target.checked ? 1 : 0;
-
-                if (!e.target.checked) {
-                    const confirmar = confirm("¿Deseas cambiar a NO ASISTIÓ?");
-                    if (!confirmar) {
-                        e.target.checked = true;
-                        return;
-                    }
-                }
-
-                const res = await fetch("/updateEstado", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id, acudiente, estado: nuevoEstado }),
-                });
-
-                if (res.ok) {
-                    // Actualizar nombres de acudientes
-                    const acudienteInfo = fila.querySelector(`.acudiente-item:nth-child(${acudiente}) .acudiente-name`);
-                    acudienteInfo.classList.remove('estado-verde', 'estado-rojo');
-                    acudienteInfo.classList.add(nuevoEstado ? 'estado-verde' : 'estado-rojo');
-
-                    // Actualizar clase de fila
-                    actualizarClaseFila(fila);
-
-                    // Efecto visual
-                    fila.style.transition = "background-color 0.5s ease";
-                    fila.style.backgroundColor = nuevoEstado ? "#c8f7c5" : "#f7c5c5";
-                    setTimeout(() => (fila.style.backgroundColor = ""), 1500);
-                }
-            });
-        });
-
-        // ⚡ SUSCRIPCIÓN EN TIEMPO REAL
-        const canal = supabase.channel("realtime:grados");
-
-        canal.on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "grados" },
-            (payload) => {
-                const fila = document.querySelector(`tr[data-id='${payload.new.id}']`);
-                if (!fila) return;
-
-                const chk1 = fila.querySelector('[data-acudiente="1"]');
-                const chk2 = fila.querySelector('[data-acudiente="2"]');
-                const acudiente1Name = fila.querySelector('.acudiente-item:nth-child(1) .acudiente-name');
-                const acudiente2Name = fila.querySelector('.acudiente-item:nth-child(2) .acudiente-name');
-
-                if (payload.new.estado1 !== undefined) {
-                    chk1.checked = payload.new.estado1;
-                    acudiente1Name.classList.remove('estado-verde', 'estado-rojo');
-                    acudiente1Name.classList.add(payload.new.estado1 ? 'estado-verde' : 'estado-rojo');
-                }
-
-                if (payload.new.estado2 !== undefined) {
-                    chk2.checked = payload.new.estado2;
-                    acudiente2Name.classList.remove('estado-verde', 'estado-rojo');
-                    acudiente2Name.classList.add(payload.new.estado2 ? 'estado-verde' : 'estado-rojo');
-                }
-
-                // Actualizar clase de fila
-                actualizarClaseFila(fila);
-
-                // 💫 Efecto visual breve en la fila
-                fila.style.transition = "background-color 0.4s ease";
-                fila.style.backgroundColor = "#e7f3ff";
-                setTimeout(() => (fila.style.backgroundColor = ""), 800);
-            }
-        );
-
-        canal.subscribe();
-        // Inicializar contadores
-        actualizarContadores();
-    </script>
+    <script type="module" src="/js/dashboard.js"></script>
 </body>
 
 </html>
