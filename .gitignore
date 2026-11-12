@@ -1,2 +1,7 @@
 .env
 node_modules
+
+# Herramientas de Claude Code (skills locales, no son parte de la app)
+.claude/
+skills-lock.json
+.taste-skill/

@@ -111,13 +111,15 @@ async function verificarContraseña(usuario, contraseña) {
 // === Página de login ===
 app.get("/", (req, res) => {
   if (req.session.user) return res.redirect("/dashboard");
-  res.render("login", { error: null });
+  res.render("login", { error: null, user: "" });
 });
 
 // === Procesar login ===
 app.post("/login", async (req, res) => {
   const { user, contraseña } = req.body;
-  const errorLogin = () => res.status(401).render("login", { error: "Usuario o contraseña incorrectos" });
+  const usuarioIngresado = typeof user === "string" ? user.trim().slice(0, 100) : "";
+  const errorLogin = () =>
+    res.status(401).render("login", { error: "Usuario o contraseña incorrectos", user: usuarioIngresado });
 
   if (typeof user !== "string" || typeof contraseña !== "string" || !user.trim() || !contraseña) {
     return errorLogin();
@@ -131,7 +133,7 @@ app.post("/login", async (req, res) => {
 
   if (error) {
     console.error("Error consultando usuario:", error.message);
-    return res.status(500).render("login", { error: "Error del servidor. Intenta de nuevo." });
+    return res.status(500).render("login", { error: "Error del servidor. Intenta de nuevo.", user: usuarioIngresado });
   }
 
   if (!(await verificarContraseña(usuario, contraseña))) {
@@ -140,7 +142,7 @@ app.post("/login", async (req, res) => {
 
   // Nueva sesión para evitar fijación de sesión. Solo se guardan datos no sensibles.
   req.session.regenerate((err) => {
-    if (err) return res.status(500).render("login", { error: "Error del servidor. Intenta de nuevo." });
+    if (err) return res.status(500).render("login", { error: "Error del servidor. Intenta de nuevo.", user: usuarioIngresado });
     req.session.user = { id: usuario.id, user: usuario.user, nombre: usuario.nombre };
     req.session.save(() => res.redirect("/dashboard"));
   });

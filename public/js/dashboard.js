@@ -15,6 +15,17 @@ const resultCount = document.getElementById("resultCount");
 const emptyState = document.getElementById("emptyState");
 const liveIndicator = document.getElementById("liveIndicator");
 const liveText = document.getElementById("liveText");
+const confirmDialog = document.getElementById("confirmDialog");
+const confirmTexto = document.getElementById("confirmTexto");
+const toastRegion = document.getElementById("toastRegion");
+const progreso = {
+  llegados: document.getElementById("progresoLlegados"),
+  total: document.getElementById("progresoTotal"),
+  ceremonia: document.getElementById("progresoCeremonia"),
+  porcentaje: document.getElementById("progresoPorcentaje"),
+  barra: document.getElementById("progresoBarra"),
+  relleno: document.getElementById("progresoRelleno"),
+};
 
 const CLASES_FILA = {
   ambos: "fila-ambos-asistieron",
@@ -102,6 +113,53 @@ function actualizarContadores() {
   document.getElementById("countUno").textContent = contar(CLASES_FILA.uno);
   document.getElementById("countNinguno").textContent = contar(CLASES_FILA.ninguno);
   document.getElementById("countTotal").textContent = delaCeremonia.length;
+
+  // Progreso: acudientes que ya llegaron sobre el total de la ceremonia activa
+  const checks = delaCeremonia.flatMap((f) => Array.from(f.querySelectorAll(".check")));
+  const llegados = checks.filter((c) => c.checked).length;
+  const pct = checks.length ? Math.round((llegados / checks.length) * 100) : 0;
+  progreso.llegados.textContent = llegados;
+  progreso.total.textContent = checks.length;
+  const nombre = nombreCeremonia(ceremoniaActiva);
+  progreso.ceremonia.textContent =
+    ceremoniaActiva === TODAS ? "· Todas las ceremonias" : `· ${nombre.charAt(0).toUpperCase()}${nombre.slice(1)}`;
+  progreso.porcentaje.textContent = `${pct}%`;
+  progreso.barra.setAttribute("aria-valuenow", String(pct));
+  progreso.relleno.style.width = `${pct}%`;
+}
+
+// ---------- Diálogo de confirmación y avisos ----------
+function confirmarQuitarLlegada(fila, acudiente) {
+  const nombre = fila.querySelector(`.acudiente-item[data-name="${acudiente}"] .acudiente-name`)?.textContent.trim();
+  const estudiante = fila.querySelector(".student-name")?.textContent.trim();
+  const texto = `${nombre || `El acudiente ${acudiente}`} quedará como "No ha llegado"${estudiante ? ` para ${estudiante}` : ""}.`;
+
+  // Navegadores sin <dialog>: se usa la confirmación del navegador
+  if (typeof confirmDialog?.showModal !== "function") return Promise.resolve(confirm(texto));
+
+  confirmTexto.textContent = texto;
+  confirmDialog.returnValue = "";
+  confirmDialog.showModal();
+  return new Promise((resolve) => {
+    confirmDialog.addEventListener("close", () => resolve(confirmDialog.returnValue === "confirmar"), { once: true });
+  });
+}
+
+// Cerrar el diálogo al hacer clic fuera de él
+confirmDialog?.addEventListener("click", (e) => {
+  if (e.target === confirmDialog) confirmDialog.close("cancelar");
+});
+
+function mostrarAviso(mensaje) {
+  const aviso = document.createElement("div");
+  aviso.className = "toast";
+  aviso.textContent = mensaje;
+  toastRegion.append(aviso);
+  setTimeout(() => {
+    aviso.classList.add("is-leaving");
+    aviso.addEventListener("animationend", () => aviso.remove(), { once: true });
+    setTimeout(() => aviso.remove(), 600);
+  }, 4500);
 }
 
 // ---------- Filtros (ceremonia + búsqueda + tarjeta de estadística) ----------
@@ -158,6 +216,24 @@ btnClear.addEventListener("click", () => {
   busqueda.focus();
 });
 
+// Atajo: "/" enfoca la búsqueda; Escape la limpia
+document.addEventListener("keydown", (e) => {
+  const escribiendo = e.target.closest?.("input, textarea, select, [contenteditable]");
+  if (e.key === "/" && !escribiendo && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    e.preventDefault();
+    busqueda.focus();
+    busqueda.select();
+  }
+});
+
+busqueda.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && busqueda.value) {
+    e.preventDefault();
+    busqueda.value = "";
+    aplicarFiltros();
+  }
+});
+
 statCards.forEach((card) => {
   card.addEventListener("click", () => {
     const filtro = card.dataset.filter;
@@ -170,8 +246,13 @@ statCards.forEach((card) => {
 // ---------- Estado de cada fila ----------
 function pintarAcudiente(fila, n, asistio) {
   const caja = fila.querySelector(`.acudiente-item[data-name="${n}"]`);
+  const yaEstaba = caja.classList.contains("asistio");
   caja.classList.toggle("asistio", asistio);
   caja.classList.toggle("no-asistio", !asistio);
+  if (asistio && !yaEstaba) {
+    caja.classList.add("recien-llego");
+    setTimeout(() => caja.classList.remove("recien-llego"), 500);
+  }
 }
 
 function actualizarClaseFila(fila) {
@@ -199,9 +280,14 @@ document.querySelectorAll(".check").forEach((chk) => {
     const acudiente = chk.dataset.acudiente;
     const nuevoEstado = chk.checked;
 
-    if (!nuevoEstado && !confirm("¿Deseas cambiar a NO ASISTIÓ?")) {
-      chk.checked = true;
-      return;
+    if (!nuevoEstado) {
+      chk.checked = true; // se mantiene marcado mientras se decide
+      const confirmado = await confirmarQuitarLlegada(fila, acudiente);
+      if (!confirmado) {
+        chk.focus();
+        return;
+      }
+      chk.checked = false;
     }
 
     chk.disabled = true;
@@ -224,7 +310,7 @@ document.querySelectorAll(".check").forEach((chk) => {
     } catch (err) {
       console.error("No se pudo actualizar el estado:", err);
       chk.checked = !nuevoEstado;
-      alert("No se pudo guardar el cambio. Revisa tu conexión e inténtalo de nuevo.");
+      mostrarAviso("No se pudo guardar el cambio. Revisa tu conexión e inténtalo de nuevo.");
     } finally {
       chk.disabled = false;
     }

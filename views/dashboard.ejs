@@ -5,7 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Panel de asistencia | Control de Grados</title>
-    <link rel="icon" type="image/jpeg" href="/img/cursos-logo.jpg" />
+    <meta name="description" content="Registro de llegada de los acudientes a la ceremonia de grados." />
+    <meta name="theme-color" content="#0f1b33" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/webp" href="/img/cursos-logo.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
@@ -13,10 +16,12 @@
 </head>
 
 <body data-supabase-url="<%= supabaseUrl %>" data-supabase-key="<%= supabaseAnonKey %>" data-canal="<%= canal %>">
+    <a href="#busqueda" class="skip-link">Ir a la búsqueda</a>
+
     <!-- BARRA SUPERIOR -->
     <header class="topbar">
         <a href="/dashboard" class="topbar-brand">
-            <img src="/img/cursos-logo.jpg" alt="Logo" class="logo" />
+            <img src="/img/cursos-logo.jpg" alt="" class="logo" />
             <span class="topbar-title">
                 <strong>Control de Grados</strong>
                 <span>Sistema de asistencia</span>
@@ -42,17 +47,32 @@
 
     <main class="dashboard">
         <!-- ENCABEZADO -->
-        <div class="page-header">
-            <div>
+        <div class="page-header" data-enter>
+            <div class="page-header-text">
                 <h1>Asistencia de acudientes</h1>
-                <p>Bienvenido, <%= user.nombre %>. Marca la llegada de cada acudiente a la ceremonia.</p>
+                <p>Hola, <%= (user.nombre || "").split(" ")[0] %>. Toca la tarjeta de cada acudiente cuando llegue.</p>
             </div>
-            <span class="live-indicator" id="liveIndicator">
+            <span class="live-indicator" id="liveIndicator" role="status">
                 <span class="live-dot"></span>
-                <span id="liveText">Conectando...</span>
+                <span id="liveText">Conectando…</span>
             </span>
+
+            <!-- Progreso de llegada de la ceremonia activa -->
+            <div class="progress-card">
+                <p class="progress-text">
+                    <strong id="progresoLlegados">0</strong> de <span id="progresoTotal">0</span> acudientes han llegado
+                    <span class="progress-scope" id="progresoCeremonia"></span>
+                </p>
+                <span class="progress-percent" id="progresoPorcentaje">0%</span>
+                <div class="progress-bar" role="progressbar" aria-labelledby="progresoLlegados" aria-valuemin="0"
+                    aria-valuemax="100" aria-valuenow="0" id="progresoBarra">
+                    <span class="progress-fill" id="progresoRelleno"></span>
+                </div>
+            </div>
         </div>
 
+        <!-- Barra fija al hacer scroll: ceremonias + búsqueda -->
+        <div class="sticky-tools">
         <!-- CEREMONIAS (se generan a partir de los datos) -->
         <section class="ceremonia-panel" aria-labelledby="ceremoniaLabel">
             <span class="ceremonia-panel-label" id="ceremoniaLabel">Ceremonia en curso</span>
@@ -85,8 +105,9 @@
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
                 <label for="busqueda" class="sr-only">Buscar estudiante</label>
-                <input type="search" id="busqueda" placeholder="Buscar por estudiante, acudiente o código"
-                    autocomplete="off" />
+                <input type="search" id="busqueda" placeholder="Buscar por nombre o código"
+                    autocomplete="off" aria-keyshortcuts="/" />
+                <kbd class="search-kbd" aria-hidden="true">/</kbd>
                 <button type="button" class="btn-clear" id="btnClear" aria-label="Limpiar búsqueda" hidden>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -112,6 +133,7 @@
                 </svg>
             </button>
         </div>
+        </div>
 
         <!-- ESTADÍSTICAS (ocultas por defecto) -->
         <section class="stats-grid" id="statsContainer" aria-label="Estadísticas de asistencia" hidden>
@@ -124,7 +146,7 @@
                 </span>
                 <span>
                     <span class="stat-value" id="countAmbos">0</span>
-                    <span class="stat-label">Ambos asistieron</span>
+                    <span class="stat-label">Ambos llegaron</span>
                 </span>
             </button>
 
@@ -137,11 +159,11 @@
                 </span>
                 <span>
                     <span class="stat-value" id="countUno">0</span>
-                    <span class="stat-label">Solo uno asistió</span>
+                    <span class="stat-label">Solo uno llegó</span>
                 </span>
             </button>
 
-            <button type="button" class="stat-card stat-danger" data-filter="ninguno">
+            <button type="button" class="stat-card stat-pending" data-filter="ninguno">
                 <span class="stat-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -151,7 +173,7 @@
                 </span>
                 <span>
                     <span class="stat-value" id="countNinguno">0</span>
-                    <span class="stat-label">Ninguno asistió</span>
+                    <span class="stat-label">Ninguno ha llegado</span>
                 </span>
             </button>
 
@@ -167,7 +189,7 @@
                 </span>
                 <span>
                     <span class="stat-value" id="countTotal">0</span>
-                    <span class="stat-label">Total estudiantes</span>
+                    <span class="stat-label">Estudiantes</span>
                 </span>
             </button>
         </section>
@@ -256,7 +278,7 @@
                                                     <line x1="18" y1="6" x2="6" y2="18"></line>
                                                     <line x1="6" y1="6" x2="18" y2="18"></line>
                                                 </svg>
-                                                <span class="texto-asistio">Asistió</span>
+                                                <span class="texto-asistio">Llegó</span>
                                                 <span class="texto-no-asistio">No ha llegado</span>
                                             </span>
                                         </label>
@@ -271,9 +293,31 @@
                 </tbody>
             </table>
 
-            <p class="empty-state" id="emptyState" hidden>No se encontraron estudiantes con ese criterio.</p>
+            <div class="empty-state" id="emptyState" hidden>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <p>Ningún estudiante coincide con esa búsqueda o filtro.</p>
+            </div>
         </section>
     </main>
+
+    <!-- Confirmación para desmarcar una llegada -->
+    <dialog class="confirm-dialog" id="confirmDialog" aria-labelledby="confirmTitulo" aria-describedby="confirmTexto">
+        <form method="dialog">
+            <h2 id="confirmTitulo">¿Quitar la llegada?</h2>
+            <p id="confirmTexto"></p>
+            <div class="confirm-actions">
+                <button type="submit" value="cancelar" class="btn btn-secondary" autofocus>Dejar como llegó</button>
+                <button type="submit" value="confirmar" class="btn btn-danger">Quitar llegada</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Avisos breves (errores al guardar) -->
+    <div class="toast-region" id="toastRegion" role="status" aria-live="polite"></div>
 
     <footer class="footer">
         <div class="footer-content">
