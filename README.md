@@ -9,7 +9,9 @@ Cada estudiante tiene hasta dos acudientes. Desde el panel, el personal del cole
 - **Inicio de sesión** con usuario y contraseña (contraseñas cifradas con bcrypt).
 - **Listado de estudiantes** con sus dos acudientes y un interruptor de asistencia para cada uno.
 - **Sincronización en tiempo real** entre todos los usuarios conectados.
-- **Búsqueda** por nombre de estudiante, acudiente o código.
+- **Ceremonias**: pestañas generadas a partir de la columna `Ceremonia`. La ceremonia seleccionada tiene prioridad; al buscar, también aparecen los estudiantes de otras ceremonias, separados y con un aviso de a cuál pertenecen.
+- **Novedades**: si la columna `Novedad` tiene texto, el estudiante muestra un identificador y se puede leer la novedad; si está vacía, se muestra "Sin novedad".
+- **Búsqueda** por nombre de estudiante, acudiente o código (sin importar tildes ni mayúsculas).
 - **Estadísticas** de asistencia, que también funcionan como filtros:
   - ambos acudientes asistieron
   - solo uno asistió
@@ -40,9 +42,7 @@ Cada estudiante tiene hasta dos acudientes. Desde el panel, el personal del cole
 │   └── dashboard.ejs      # Panel de asistencia
 ├── public/
 │   ├── css/
-│   │   ├── base.css       # Variables, reset y estilos compartidos
-│   │   ├── login.css      # Estilos del login
-│   │   └── dashboard.css  # Estilos del panel
+│   │   └── style.css      # Hoja de estilos única (base, login, panel, ceremonias)
 │   ├── js/
 │   │   ├── login.js       # Mostrar u ocultar contraseña
 │   │   └── dashboard.js   # Búsqueda, filtros, estadísticas y tiempo real
@@ -118,6 +118,8 @@ Cada estudiante tiene hasta dos acudientes. Desde el panel, el personal del cole
 | `Acudiente_2` | text | Nombre del segundo acudiente |
 | `estado1` | boolean | Asistencia del acudiente 1 |
 | `estado2` | boolean | Asistencia del acudiente 2 |
+| `Ceremonia` | text | Ceremonia y horario (ej. `Ceremonia 1 9:30am`). Texto libre |
+| `Novedad` | text | Novedad a tener en cuenta en el ingreso. Vacío = sin novedad |
 
 ### Cifrar contraseñas
 

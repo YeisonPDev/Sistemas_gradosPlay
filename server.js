@@ -150,13 +150,27 @@ app.post("/login", async (req, res) => {
 app.get("/dashboard", requireLogin, async (req, res) => {
   const { data: grados, error } = await supabase
     .from("grados")
-    .select("id, Estudiante, Codigo, Acudiente_1, Acudiente_2, estado1, estado2")
+    .select("id, Estudiante, Codigo, Acudiente_1, Acudiente_2, estado1, estado2, Ceremonia, Novedad")
     .order("Estudiante", { ascending: true });
 
   if (error) return res.status(500).send("Error al cargar datos");
 
+  // Ceremonia y novedad son texto libre que se edita en Supabase: se limpian espacios
+  // y las ceremonias se toman de los mismos datos (no están predefinidas).
+  grados.forEach((g) => {
+    g.Ceremonia = (g.Ceremonia ?? "").toString().trim();
+    g.Novedad = (g.Novedad ?? "").toString().trim();
+  });
+
+  const ceremonias = [...new Set(grados.map((g) => g.Ceremonia).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, "es", { numeric: true, sensitivity: "base" })
+  );
+  const haySinCeremonia = grados.some((g) => !g.Ceremonia);
+
   res.render("dashboard", {
     grados,
+    ceremonias,
+    haySinCeremonia,
     user: req.session.user,
     // Clave pública (anon): solo se usa para escuchar el canal de avisos.
     // Nunca enviar aquí la clave service_role.
@@ -211,6 +225,13 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
   });
 });
+
+if (!process.env.SUPABASE_ANON_KEY) {
+  console.warn(
+    "SUPABASE_ANON_KEY no está definido: el panel funcionará, pero SIN tiempo real. " +
+      "Agrega la clave publicable (Project Settings > API Keys) al .env y a las variables de Vercel."
+  );
+}
 
 // === Exportar para Vercel ===
 const PORT = process.env.PORT || 3000;

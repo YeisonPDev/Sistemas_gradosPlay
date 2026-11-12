@@ -6,7 +6,11 @@ const btnClear = document.getElementById("btnClear");
 const btnToggleStats = document.getElementById("btnToggleStats");
 const statsContainer = document.getElementById("statsContainer");
 const statCards = document.querySelectorAll(".stat-card");
-const filas = Array.from(document.querySelectorAll("#tablaGrados tbody tr"));
+const tbody = document.querySelector("#tablaGrados tbody");
+const filas = Array.from(tbody.querySelectorAll("tr[data-id]"));
+const separador = document.getElementById("separadorCeremonias");
+const separadorTexto = document.getElementById("separadorTexto");
+const tabsCeremonia = Array.from(document.querySelectorAll(".ceremonia-tab"));
 const resultCount = document.getElementById("resultCount");
 const emptyState = document.getElementById("emptyState");
 const liveIndicator = document.getElementById("liveIndicator");
@@ -18,7 +22,68 @@ const CLASES_FILA = {
   ninguno: "fila-ninguno-asistio",
 };
 
+const TODAS = "*";
+const CLAVE_CEREMONIA = "grados.ceremoniaActiva";
+
 let filtroActivo = null;
+
+// Búsqueda sin distinguir mayúsculas ni tildes ("perez" encuentra "Pérez").
+const normalizar = (texto) =>
+  String(texto ?? "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .trim();
+
+filas.forEach((fila) => {
+  fila.dataset.search = normalizar(fila.dataset.search);
+});
+
+// ---------- Ceremonias ----------
+// La ceremonia activa tiene prioridad: sin búsqueda solo se ven sus estudiantes;
+// al buscar, primero salen los de la ceremonia activa y luego los de otras
+// ceremonias, marcados con un aviso para no confundirlos.
+const leerCeremoniaGuardada = () => {
+  try {
+    return localStorage.getItem(CLAVE_CEREMONIA);
+  } catch {
+    return null;
+  }
+};
+
+const guardarCeremonia = (valor) => {
+  try {
+    localStorage.setItem(CLAVE_CEREMONIA, valor);
+  } catch {
+    /* sin almacenamiento: no pasa nada */
+  }
+};
+
+const existeTab = (valor) => tabsCeremonia.some((t) => t.dataset.ceremonia === valor);
+const guardada = leerCeremoniaGuardada();
+let ceremoniaActiva = guardada !== null && existeTab(guardada) ? guardada : tabsCeremonia[0]?.dataset.ceremonia ?? TODAS;
+
+const esDeCeremoniaActiva = (fila) => ceremoniaActiva === TODAS || fila.dataset.ceremonia === ceremoniaActiva;
+const nombreCeremonia = (valor) => (valor === TODAS ? "todas las ceremonias" : valor || "sin ceremonia");
+
+function pintarTabs() {
+  tabsCeremonia.forEach((tab) => {
+    const valor = tab.dataset.ceremonia;
+    tab.setAttribute("aria-selected", String(valor === ceremoniaActiva));
+    tab.querySelector(".ceremonia-tab-count").textContent =
+      valor === TODAS ? filas.length : filas.filter((f) => f.dataset.ceremonia === valor).length;
+  });
+}
+
+tabsCeremonia.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    ceremoniaActiva = tab.dataset.ceremonia;
+    guardarCeremonia(ceremoniaActiva);
+    pintarTabs();
+    actualizarContadores();
+    aplicarFiltros();
+  });
+});
 
 // ---------- Estadísticas ----------
 btnToggleStats.addEventListener("click", () => {
@@ -29,32 +94,60 @@ btnToggleStats.addEventListener("click", () => {
   btnToggleStats.querySelector("span").textContent = mostrar ? "Ocultar estadísticas" : "Ver estadísticas";
 });
 
+// Las estadísticas corresponden a la ceremonia activa.
 function actualizarContadores() {
-  const contar = (clase) => filas.filter((f) => f.classList.contains(clase)).length;
+  const delaCeremonia = filas.filter(esDeCeremoniaActiva);
+  const contar = (clase) => delaCeremonia.filter((f) => f.classList.contains(clase)).length;
   document.getElementById("countAmbos").textContent = contar(CLASES_FILA.ambos);
   document.getElementById("countUno").textContent = contar(CLASES_FILA.uno);
   document.getElementById("countNinguno").textContent = contar(CLASES_FILA.ninguno);
-  document.getElementById("countTotal").textContent = filas.length;
+  document.getElementById("countTotal").textContent = delaCeremonia.length;
 }
 
-// ---------- Filtros (búsqueda + tarjeta de estadística) ----------
+// ---------- Filtros (ceremonia + búsqueda + tarjeta de estadística) ----------
 function aplicarFiltros() {
-  const texto = busqueda.value.trim().toLowerCase();
-  let visibles = 0;
+  const texto = normalizar(busqueda.value);
+  const principales = [];
+  const otras = [];
+  let totalCeremonia = 0;
 
   filas.forEach((fila) => {
-    const coincideTexto = !texto || fila.textContent.toLowerCase().includes(texto);
+    const enActiva = esDeCeremoniaActiva(fila);
+    const coincideTexto = !texto || fila.dataset.search.includes(texto);
     const coincideEstado =
       !filtroActivo || filtroActivo === "todos" || fila.classList.contains(CLASES_FILA[filtroActivo]);
-    const visible = coincideTexto && coincideEstado;
+
+    // Los de otras ceremonias solo aparecen cuando se está buscando.
+    const visible = coincideTexto && coincideEstado && (enActiva || Boolean(texto));
     fila.hidden = !visible;
-    if (visible) visibles++;
+    fila.classList.toggle("otra-ceremonia", !enActiva);
+    fila.querySelector(".aviso-otra-ceremonia").hidden = enActiva;
+
+    if (enActiva) totalCeremonia++;
+    if (visible) (enActiva ? principales : otras).push(fila);
   });
 
+  // Orden: primero la ceremonia activa, luego el separador y las demás ceremonias.
+  const ocultas = filas.filter((f) => f.hidden);
+  tbody.append(...principales, separador, ...otras, ...ocultas);
+
+  separador.hidden = otras.length === 0;
+  separadorTexto.textContent =
+    principales.length === 0
+      ? `No se encontró en ${nombreCeremonia(ceremoniaActiva)} · resultados en otras ceremonias`
+      : "También encontrados en otras ceremonias";
+
+  const visibles = principales.length + otras.length;
   btnClear.hidden = !texto;
   emptyState.hidden = visibles > 0;
-  resultCount.textContent =
-    visibles === filas.length ? `${filas.length} estudiantes` : `${visibles} de ${filas.length} estudiantes`;
+
+  const etiqueta = ceremoniaActiva === TODAS ? "" : ` · ${nombreCeremonia(ceremoniaActiva)}`;
+  let resumen =
+    principales.length === totalCeremonia
+      ? `${totalCeremonia} estudiantes${etiqueta}`
+      : `${principales.length} de ${totalCeremonia} estudiantes${etiqueta}`;
+  if (otras.length) resumen += ` (+${otras.length} en otras ceremonias)`;
+  resultCount.textContent = resumen;
 }
 
 busqueda.addEventListener("input", aplicarFiltros);
@@ -76,9 +169,9 @@ statCards.forEach((card) => {
 
 // ---------- Estado de cada fila ----------
 function pintarAcudiente(fila, n, asistio) {
-  const nombre = fila.querySelector(`[data-name="${n}"]`);
-  nombre.classList.toggle("estado-verde", asistio);
-  nombre.classList.toggle("estado-rojo", !asistio);
+  const caja = fila.querySelector(`.acudiente-item[data-name="${n}"]`);
+  caja.classList.toggle("asistio", asistio);
+  caja.classList.toggle("no-asistio", !asistio);
 }
 
 function actualizarClaseFila(fila) {
@@ -173,9 +266,11 @@ if (supabaseUrl && supabaseKey && canal) {
       else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") setLive(false, "Sin conexión en vivo");
     });
 } else {
+  console.warn("Tiempo real desactivado: falta SUPABASE_ANON_KEY en el servidor.");
   setLive(false, "Tiempo real desactivado");
 }
 
 // ---------- Inicio ----------
+pintarTabs();
 actualizarContadores();
 aplicarFiltros();

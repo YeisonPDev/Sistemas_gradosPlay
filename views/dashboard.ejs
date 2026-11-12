@@ -9,8 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="/css/base.css" />
-    <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body data-supabase-url="<%= supabaseUrl %>" data-supabase-key="<%= supabaseAnonKey %>" data-canal="<%= canal %>">
@@ -53,6 +52,29 @@
                 <span id="liveText">Conectando...</span>
             </span>
         </div>
+
+        <!-- CEREMONIAS (se generan a partir de los datos) -->
+        <section class="ceremonia-panel" aria-labelledby="ceremoniaLabel">
+            <span class="ceremonia-panel-label" id="ceremoniaLabel">Ceremonia en curso</span>
+            <div class="ceremonia-tabs" role="tablist" aria-labelledby="ceremoniaLabel">
+                <% ceremonias.forEach(c => { %>
+                    <button type="button" class="ceremonia-tab" role="tab" aria-selected="false" data-ceremonia="<%= c %>">
+                        <span class="ceremonia-tab-label"><%= c %></span>
+                        <span class="ceremonia-tab-count">0</span>
+                    </button>
+                <% }) %>
+                <% if (haySinCeremonia) { %>
+                    <button type="button" class="ceremonia-tab" role="tab" aria-selected="false" data-ceremonia="">
+                        <span class="ceremonia-tab-label">Sin ceremonia</span>
+                        <span class="ceremonia-tab-count">0</span>
+                    </button>
+                <% } %>
+                <button type="button" class="ceremonia-tab" role="tab" aria-selected="false" data-ceremonia="*">
+                    <span class="ceremonia-tab-label">Todas</span>
+                    <span class="ceremonia-tab-count">0</span>
+                </button>
+            </div>
+        </section>
 
         <!-- HERRAMIENTAS -->
         <div class="toolbar">
@@ -158,6 +180,7 @@
                     <span class="legend-item"><span class="legend-swatch ambos"></span>Ambos</span>
                     <span class="legend-item"><span class="legend-swatch uno"></span>Uno</span>
                     <span class="legend-item"><span class="legend-swatch ninguno"></span>Ninguno</span>
+                    <span class="legend-item"><span class="legend-swatch novedad"></span>Con novedad</span>
                 </div>
             </div>
 
@@ -170,30 +193,81 @@
                 </thead>
                 <tbody>
                     <% grados.forEach(g => { %>
-                        <tr data-id="<%= g.id %>"
+                        <tr data-id="<%= g.id %>" data-ceremonia="<%= g.Ceremonia %>"
+                            data-search="<%= [g.Estudiante, g.Codigo, g.Acudiente_1, g.Acudiente_2].filter(v => v != null).join(' ') %>"
                             class="<%= (g.estado1 && g.estado2) ? 'fila-ambos-asistieron' : (g.estado1 || g.estado2) ? 'fila-uno-asistio' : 'fila-ninguno-asistio' %>">
                             <td>
-                                <span class="student-name"><%= g.Estudiante %></span>
-                                <span class="student-code">Código <%= g.Codigo %></span>
+                                <span class="student-name-row">
+                                    <span class="student-name"><%= g.Estudiante %></span>
+                                    <% if (g.Novedad) { %>
+                                        <span class="novedad-indicador" title="Este estudiante tiene una novedad">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                            </svg>
+                                            Novedad
+                                        </span>
+                                    <% } %>
+                                </span>
+                                <span class="student-meta">
+                                    <span class="student-code">Código <%= g.Codigo %></span>
+                                    <span class="ceremonia-badge <%= g.Ceremonia ? '' : 'sin-ceremonia' %>"><%= g.Ceremonia || 'Sin ceremonia' %></span>
+                                </span>
+
+                                <span class="aviso-otra-ceremonia" hidden>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                    <span>No es de esta ceremonia: pertenece a <strong><%= g.Ceremonia || 'Sin ceremonia' %></strong></span>
+                                </span>
+
+                                <% if (g.Novedad) { %>
+                                    <div class="novedad novedad-activa">
+                                        <span class="novedad-titulo">Novedad</span>
+                                        <span class="novedad-texto"><%= g.Novedad %></span>
+                                    </div>
+                                <% } else { %>
+                                    <p class="novedad novedad-vacia">Sin novedad</p>
+                                <% } %>
                             </td>
                             <td>
                                 <div class="acudientes-container">
                                     <% [1, 2].forEach(n => { const estado = g['estado' + n]; %>
-                                        <label class="acudiente-item">
-                                            <span class="acudiente-info">
-                                                <span class="acudiente-label">Acudiente <%= n %></span>
-                                                <span class="acudiente-name <%= estado ? 'estado-verde' : 'estado-rojo' %>"
-                                                    data-name="<%= n %>"><%= g['Acudiente_' + n] %></span>
-                                            </span>
+                                        <label class="acudiente-item <%= estado ? 'asistio' : 'no-asistio' %>" data-name="<%= n %>">
                                             <input type="checkbox" class="check" data-acudiente="<%= n %>"
                                                 aria-label="Asistencia acudiente <%= n %> de <%= g.Estudiante %>"
                                                 <%= estado ? 'checked' : '' %> />
+                                            <span class="acudiente-info">
+                                                <span class="acudiente-label">Acudiente <%= n %></span>
+                                                <span class="acudiente-name"><%= g['Acudiente_' + n] %></span>
+                                            </span>
+                                            <span class="acudiente-estado">
+                                                <svg class="icono-asistio" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                <svg class="icono-no-asistio" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                </svg>
+                                                <span class="texto-asistio">Asistió</span>
+                                                <span class="texto-no-asistio">No ha llegado</span>
+                                            </span>
                                         </label>
                                     <% }) %>
                                 </div>
                             </td>
                         </tr>
                     <% }) %>
+                    <tr class="separador-ceremonias" id="separadorCeremonias" hidden>
+                        <td colspan="2" id="separadorTexto">Encontrados en otras ceremonias</td>
+                    </tr>
                 </tbody>
             </table>
 
